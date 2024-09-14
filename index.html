@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Web Components</title>
+		<link rel="stylesheet" href="style.css" />
+		<script src="components/number-counter.js" type="module" defer></script>
+		<script src="components/character-sprite.js" type="module" defer></script>
+		<script src="components/health-meter.js" type="module" defer></script>
+		<script src="script.js" defer></script>
+	</head>
+	<body>
+		<div class="playfield" id="playfield">
+			<img
+				class="bg-img"
+				src="sprites/garden.png"
+				alt="playfield background garden"
+			/>
+			<character-sprite
+				id="character"
+				class="character"
+				alt="Character"
+				src="chaos/neutral.png"
+				direction="face_down"
+			></character-sprite>
+		</div>
+
+		<!-- <button onclick="moveCharacter()">Move Character</button> -->
+
+		<!-- <a href="https://www.youtube.com/watch?v=4ZCJDf5gjLA">
+			Go Make Things tutorial
+		</a>
+		<br />
+		<br /> -->
+		<div class="flex">
+			<number-counter class="number-counter">
+				<button
+					onclick="addToPoints()"
+					class="add"
+					title="add"
+					aria-label="add"
+				>
+					+
+				</button>
+				<!-- <button class="subtract" title="subtract" aria-label="subtract">
+					-
+				</button> -->
+				<img src="sprites/ring.png" alt="points icon" class="ring-icon" />
+				<span class="points-number" id="pointsDisplay"> 0 </span>
+			</number-counter>
+
+			<button
+				onclick="setHunger(0.01)"
+				aria-label="feed fruit"
+				title="feed fruit"
+			>
+				<!-- <span>Feed</span> -->
+				<div class="fruits_wrap">
+					<img
+						class="fruits"
+						src="./sprites/fruits.png"
+						alt="fruits icon"
+						width="60px"
+					/>
+				</div>
+			</button>
+
+			<div class="meters_wrap">
+				<health-meter
+					value="1.0"
+					min="0"
+					max="1.0"
+					label="hunger"
+					id="hungerMeter"
+					hue="17"
+				></health-meter>
+
+				<health-meter
+					value="0.4"
+					min="0"
+					max="1.0"
+					label="sleep"
+					id="sleepMeter"
+					hue="172"
+				></health-meter>
+
+				<health-meter
+					value="0.6"
+					min="0"
+					max="1.0"
+					label="energy"
+					id="energyMeter"
+					hue="272"
+				></health-meter>
+			</div>
+		</div>
+
+		<!-- <div class="stat">
+			<label for="energy">Energy:</label>
+			<meter
+				value="0.4"
+				max="1.0"
+				min="0.0"
+				high=".95"
+				low=".25"
+				optimum="0.75"
+			></meter>
+		</div> -->
+	</body>
+</html>

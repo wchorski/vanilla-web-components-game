@@ -1,0 +1,366 @@
+:root {
+	--pixel-size: 6;
+	--char-h: 24px;
+	--char-w: 21px;
+	--sheet-w: 286px;
+	--nudge-x: -6px;
+	--nudge-y: -12px;
+	--cell-size: -21.4;
+	--canvas-overflow: 5px;
+	--emote-w: 11px;
+	--move-speed: 20s;
+}
+
+progress {
+	/* --background: transparent; */
+	--background: repeating-linear-gradient(
+		45deg,
+		hsl(0, 0%, 26%),
+		hsl(0, 0%, 26%) 10px,
+		hsl(0, 0%, 20%) 10px,
+		hsl(0, 0%, 22%) 20px
+	);
+	--optimum: repeating-linear-gradient(
+		45deg,
+		hsl(var(--color-hue), 100%, 56%),
+		hsl(var(--color-hue), 100%, 56%) 10px,
+		hsl(var(--color-hue), 100%, 45%) 10px,
+		hsl(var(--color-hue), 100%, 42%) 20px
+	);
+	--sub-optimum: repeating-linear-gradient(
+		45deg,
+		hsl(179, 100%, 46%),
+		hsl(179, 100%, 46%) 10px,
+		hsl(179, 100%, 40%) 10px,
+		hsl(179, 100%, 42%) 20px
+	);
+	--sub-sub-optimum: repeating-linear-gradient(
+		45deg,
+		hsl(179, 100%, 36%),
+		hsl(179, 100%, 36%) 10px,
+		hsl(179, 100%, 30%) 10px,
+		hsl(179, 100%, 32%) 20px
+	);
+	-webkit-appearance: none;
+	appearance: none;
+	-moz-appearance: none;
+	background: var(--background);
+	display: block;
+	margin-bottom: 1em;
+	width: 100%;
+	height: 3em;
+	border: none;
+	border-radius: 30px;
+}
+
+progress[value] {
+	/* Reset the default appearance */
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	appearance: none;
+
+	/* Get rid of default border in Firefox. */
+	border: none;
+
+	/* Dimensions */
+	width: 250px;
+	height: 20px;
+}
+progress::-webkit-progress-bar {
+	background-color: var(
+		--background
+	); /* Background of the progress bar (track) */
+	border-radius: 15px;
+}
+progress[value]::-moz-progress-bar {
+	background: var(--optimum);
+	border-radius: 7px;
+	transition-property: color, background, width;
+	transition-duration: 0.5s;
+	transition-timing-function: ease-in;
+}
+progress[value]::-webkit-progress-value {
+	background: var(--optimum);
+	border-radius: 7px;
+	transition-property: color, background, width;
+	transition-duration: 0.5s;
+	transition-timing-function: ease-in;
+}
+
+/* meter::-webkit-meter-bar {
+	background: var(--background);
+}
+
+meter:-moz-meter-optimum::-moz-meter-bar {
+	background: var(--optimum);
+}
+
+meter::-webkit-meter-optimum-value {
+	background: var(--optimum);
+}
+
+meter:-moz-meter-sub-optimum::-moz-meter-bar {
+	background: var(--sub-optimum);
+}
+
+meter::-webkit-meter-suboptimum-value {
+	background: var(--sub-optimum);
+}
+
+meter:-moz-meter-sub-sub-optimum::-moz-meter-bar {
+	background: var(--sub-sub-optimum);
+}
+
+meter::-webkit-meter-even-less-good-value {
+	background: var(--sub-sub-optimum);
+} */
+
+button {
+	padding: 2rem;
+	font-size: 3rem;
+	border: solid 2px #f8c61d;
+	color: #f8c61d;
+	border-radius: 10px;
+	background-color: #6d6161;
+	font-weight: bolder;
+	cursor: pointer;
+	transition-property: color, background;
+	transition-duration: 0.3s;
+}
+
+button:active {
+	border: solid 2px #d4b758;
+	background-color: #383535;
+	transform: translateY(2px);
+}
+
+body {
+	background: #a18900;
+	padding: 0;
+	margin: 0;
+
+	cursor: url("./sprites/glove-point.png"), auto;
+}
+
+img {
+	image-rendering: pixelated;
+}
+
+.character {
+	cursor: url("./sprites/glove-open.png"), auto;
+}
+
+.number-counter {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+	margin-inline: 2rem;
+}
+
+.ring-icon {
+	image-rendering: pixelated;
+	width: 80px;
+}
+
+.ring-anim {
+	animation-name: animRing;
+	animation-duration: 0.1s;
+	animation-timing-function: ease-out;
+	animation-iteration-count: 1;
+}
+
+.points-number {
+	font-size: 5rem;
+}
+
+.bg-img {
+	position: absolute;
+	image-rendering: pixelated;
+	width: 900px;
+	height: 900px;
+}
+
+.playfield {
+	/* background-image: url("sprites/garden.png"); */
+
+	position: relative;
+	/* position: absolute; */
+	width: 900px;
+	height: 900px;
+}
+
+/* cred - https://codepen.io/punkydrewster713/pen/LYYQBEZ */
+/* cred - https://www.youtube.com/watch?v=ekI7vjkFrGA*/
+
+.character {
+	/* position: relative; */
+	position: absolute;
+	display: block;
+	left: 0;
+	top: 0;
+	width: fit-content;
+	transition-property: transform;
+	transition-duration: var(--move-speed);
+	transition-timing-function: linear;
+}
+
+.sprite_wrap {
+	width: calc(var(--char-w) * var(--pixel-size) + var(--canvas-overflow));
+	height: calc(var(--char-h) * var(--pixel-size) + var(--canvas-overflow));
+	overflow: hidden;
+	position: relative;
+	/* border: dotted white 1px; */
+	display: block;
+}
+
+.sprite_wrap:has(.face_right) {
+	transform: scaleX(-1);
+}
+
+.emote_wrap {
+	width: 30px;
+	height: 60px;
+	overflow: hidden;
+	position: relative;
+	/* border: dotted greenyellow 1px; */
+	display: block;
+	left: 70px;
+}
+
+.char_spritesheet {
+	image-rendering: pixelated;
+	animation-name: moveSpritesheet;
+	animation-duration: 1s;
+	animation-timing-function: steps(3);
+	animation-iteration-count: infinite;
+	/* animation-direction: alternate; */
+	width: calc(var(--sheet-w) * var(--pixel-size));
+	position: absolute;
+}
+.char_shadow {
+	image-rendering: pixelated;
+	position: absolute;
+	width: calc(var(--char-w) * var(--pixel-size));
+	bottom: 0;
+	/* height: calc(var(--char-h) * var(--pixel-size)); */
+}
+
+.char_emote {
+	width: calc(var(--emote-w) * var(--pixel-size));
+	image-rendering: pixelated;
+	position: absolute;
+	top: 0;
+	image-rendering: pixelated;
+	animation-name: animEmoteBall;
+	animation-duration: 1s;
+	animation-timing-function: steps(2);
+	animation-iteration-count: infinite;
+}
+
+.face_down {
+	top: 0;
+}
+.face_left {
+	top: calc(var(--char-h) * var(--pixel-size) * -1 - 5px);
+}
+.face_right {
+	top: calc(var(--char-h) * var(--pixel-size) * -1 - 5px);
+}
+/* .face_right {
+	top: calc(var(--char-h) * var(--pixel-size) * -1);
+} */
+.face_up {
+	top: calc(var(--char-h) * var(--pixel-size) * -2 + var(--nudge-y));
+}
+.angry {
+	top: calc(var(--char-h) * var(--pixel-size) * -3 - 30px);
+}
+.angry {
+	top: calc(var(--char-h) * var(--pixel-size) * -3 - 30px);
+}
+.expressionless {
+	top: calc(var(--char-h) * var(--pixel-size) * -4 - 60px);
+}
+.sitting {
+	top: calc(var(--char-h) * var(--pixel-size) * -5 - 60px);
+}
+
+@keyframes moveSpritesheet {
+	from {
+		transform: translate3d(var(--nudge-x), 0, 0);
+	}
+	/* to {
+		transform: translate3d(calc(var(--char-w) * -1), 0, 0);
+	} */
+	to {
+		transform: translate3d(
+			calc(var(--char-w) * var(--cell-size) + var(--nudge-x)),
+			0,
+			0
+		);
+	}
+	/* to {
+		transform: translate3d(calc(-26% + var(--nudge-x)), 0, 0);
+	} */
+}
+@keyframes animEmoteBall {
+	from {
+		transform: translate3d(0, 0, 0);
+	}
+	to {
+		transform: translate3d(calc(10px), 0, 0);
+		/* transform: translate3d(
+			calc(var(--emote-w) * var(--cell-size) + var(--nudge-x)),
+			0,
+			0
+		); */
+	}
+}
+
+@keyframes animRing {
+	from {
+		transform: rotateY(180deg);
+	}
+	to {
+		transform: rotateY(0deg);
+	}
+}
+
+.fruits_wrap {
+	width: 60px;
+	height: 60px;
+	overflow: hidden;
+	position: relative;
+	/* border: dotted white 1px; */
+	display: block;
+}
+
+.fruits {
+	animation-name: animFruits;
+	animation-duration: 3s;
+	animation-timing-function: steps(3);
+	animation-iteration-count: infinite;
+	animation-direction: alternate;
+	animation-timing-function: linear;
+	/* transition-duration: 0.2s;
+	transition-property: all;
+	transition-timing-function: ease-in; */
+	width: calc(10px * var(--pixel-size));
+	position: absolute;
+	left: 0;
+}
+
+@keyframes animFruits {
+	from {
+		filter: contrast(1);
+	}
+	to {
+		filter: contrast(10);
+	}
+}
+
+.flex {
+	display: flex;
+	gap: 1rem;
+	flex-wrap: wrap;
+}
