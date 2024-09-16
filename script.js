@@ -1,3 +1,5 @@
+// import "./lib/dragAndDrop.js"
+
 const pointsDisplay = document.getElementById("pointsDisplay")
 let points = localStorage.getItem("points")
 	? parseInt(localStorage.getItem("points"))
@@ -58,8 +60,6 @@ setInterval(testRandMeterValue, 2000)
 function setHunger(inputPoints) {
 	hungerPoints += inputPoints
 	hungerPoints = clamp(hungerPoints, 0, 1)
-	// if (hungerPoints < 0) hungerPoints = 0
-	// if (hungerPoints > 1) hungerPoints = 1
 
 	hungerMeter.querySelector(".meter").setAttribute("value", hungerPoints)
 	localStorage.setItem("hungerPoints", hungerPoints)
@@ -84,6 +84,17 @@ function initGame() {
 
 document.addEventListener("DOMContentLoaded", () => {
 	initGame()
+
+	const btnAddToPoints = document.getElementById("addToPoints")
+	if (btnAddToPoints) btnAddToPoints.addEventListener("click", addToPoints)
+
+	const btnSetHunger = document.getElementById("setHunger")
+	if (btnSetHunger)
+		btnSetHunger.addEventListener("click", setHunger.bind(null, 0.01))
+
+	//todo didn't work
+	// const { dragAndDrop } = await import("./lib/dragAndDrop")
+	// dragAndDrop()
 })
 
 function clamp(value, min, max) {

@@ -3,14 +3,15 @@
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Web Components</title>
+		<title>Chao Pet</title>
 		<link rel="stylesheet" href="style.css" />
 		<script src="components/number-counter.js" type="module" defer></script>
 		<script src="components/character-sprite.js" type="module" defer></script>
 		<script src="components/health-meter.js" type="module" defer></script>
-		<script src="script.js" defer></script>
+		<script src="components/fruit-item.js" type="module" defer></script>
+		<script src="script.js" type="module" defer></script>
 	</head>
-	<body>
+	<body class="disable-text-selection">
 		<div class="playfield" id="playfield">
 			<img
 				class="bg-img"
@@ -24,6 +25,10 @@
 				src="chaos/neutral.png"
 				direction="face_down"
 			></character-sprite>
+
+			<fruit-item type="tri" x="0" y="0"></fruit-item>
+			<fruit-item type="round" x="100" y="0"></fruit-item>
+			<fruit-item type="curved" x="200" y="0"></fruit-item>
 		</div>
 
 		<!-- <button onclick="moveCharacter()">Move Character</button> -->
@@ -35,12 +40,7 @@
 		<br /> -->
 		<div class="flex">
 			<number-counter class="number-counter">
-				<button
-					onclick="addToPoints()"
-					class="add"
-					title="add"
-					aria-label="add"
-				>
+				<button class="add" title="add" aria-label="add" id="addToPoints">
 					+
 				</button>
 				<!-- <button class="subtract" title="subtract" aria-label="subtract">
@@ -50,11 +50,7 @@
 				<span class="points-number" id="pointsDisplay"> 0 </span>
 			</number-counter>
 
-			<button
-				onclick="setHunger(0.01)"
-				aria-label="feed fruit"
-				title="feed fruit"
-			>
+			<button aria-label="feed fruit" title="feed fruit" id="setHunger">
 				<!-- <span>Feed</span> -->
 				<div class="fruits_wrap">
 					<img

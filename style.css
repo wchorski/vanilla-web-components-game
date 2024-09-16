@@ -142,6 +142,20 @@ body {
 	cursor: url("./sprites/glove-point.png"), auto;
 }
 
+.disable-drag {
+	-webkit-user-drag: none;
+	-moz-user-drag: none;
+	-ms-user-drag: none;
+}
+
+.drag-cursor {
+	cursor: none;
+}
+
+.no-select {
+	user-select: none;
+}
+
 img {
 	image-rendering: pixelated;
 }

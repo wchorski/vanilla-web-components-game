@@ -31,3 +31,4 @@ browser based pet simulator game built with
     - engergy is below half
     - hunger is above full
 - [ ] don't forget to export `<number-counter>` before too much customization
+- [ ] drag and drop fruit to feed (and other items)
