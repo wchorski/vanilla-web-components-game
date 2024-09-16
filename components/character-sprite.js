@@ -31,6 +31,9 @@ class CharacterSprite extends HTMLElement {
 		this.appendChild(sprite_wrap)
 		sprite_wrap.appendChild(this.sprite)
 
+		const dropZone = document.createElement("drop-zone")
+		this.appendChild(dropZone)
+
 		this.updateDirection()
 	}
 

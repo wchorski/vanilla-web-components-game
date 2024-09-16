@@ -30,5 +30,7 @@ browser based pet simulator game built with
   - [ ] Sleep
     - engergy is below half
     - hunger is above full
+    - sleep meter doesn't fill as fast when hungerPoints are high
+    - sleep (naptime) happens at regular intervals and duration is usually the same (slight variable?)
 - [ ] don't forget to export `<number-counter>` before too much customization
 - [ ] drag and drop fruit to feed (and other items)

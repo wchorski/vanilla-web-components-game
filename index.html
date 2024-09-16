@@ -5,16 +5,18 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>Chao Pet</title>
 		<link rel="stylesheet" href="style.css" />
+		<script src="script.js" type="module" defer></script>
 		<script src="components/number-counter.js" type="module" defer></script>
 		<script src="components/character-sprite.js" type="module" defer></script>
 		<script src="components/health-meter.js" type="module" defer></script>
 		<script src="components/fruit-item.js" type="module" defer></script>
-		<script src="script.js" type="module" defer></script>
+		<script src="components/drop-zone.js" type="module" defer></script>
+		<script src="components/shop-item.js" type="module" defer></script>
 	</head>
-	<body class="disable-text-selection">
-		<div class="playfield" id="playfield">
+	<body>
+		<div class="playfield disable-drag" id="playfield">
 			<img
-				class="bg-img"
+				class="playfield-img"
 				src="sprites/garden.png"
 				alt="playfield background garden"
 			/>
@@ -26,9 +28,26 @@
 				direction="face_down"
 			></character-sprite>
 
-			<fruit-item type="tri" x="0" y="0"></fruit-item>
-			<fruit-item type="round" x="100" y="0"></fruit-item>
-			<fruit-item type="curved" x="200" y="0"></fruit-item>
+			<fruit-item type="round" x="100" y="0" hungerValue="0.2"></fruit-item>
+			<fruit-item type="tri" x="0" y="0" hungerValue="0.5"></fruit-item>
+			<fruit-item type="curved" x="200" y="0" hungerValue="0.9"></fruit-item>
+
+			<!-- <drop-zone class="basket"></drop-zone> -->
+
+			<div id="shop">
+				<h2>Shop</h2>
+				<ul>
+					<li>
+						<shop-item type="round" cost="30"></shop-item>
+					</li>
+					<li>
+						<shop-item type="curved" cost="61"></shop-item>
+					</li>
+					<li>
+						<shop-item type="tri" cost="45"></shop-item>
+					</li>
+				</ul>
+			</div>
 		</div>
 
 		<!-- <button onclick="moveCharacter()">Move Character</button> -->

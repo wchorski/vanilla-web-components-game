@@ -1,4 +1,7 @@
 // import "./lib/dragAndDrop.js"
+// window.globalMessage = "Hello from the global scope!"
+window.g_DraggedElement = null
+window.playfield = document.getElementById("playfield")
 
 const pointsDisplay = document.getElementById("pointsDisplay")
 let points = localStorage.getItem("points")
@@ -10,11 +13,11 @@ let hungerPoints = localStorage.getItem("hungerPoints")
 	: 1
 
 function moveCharacter() {
-	const playfield = document.getElementById("playfield")
+	// const playfield = document.getElementById("playfield")
 	const character = document.getElementById("character")
 
-	const maxX = playfield.clientWidth - character.offsetWidth
-	const maxY = playfield.clientHeight - character.offsetHeight
+	const maxX = window.playfield.clientWidth - character.offsetWidth
+	const maxY = window.playfield.clientHeight - character.offsetHeight
 
 	const randomX = Math.random() * maxX
 	const randomY = Math.random() * maxY
@@ -57,14 +60,15 @@ function testRandMeterValue() {
 }
 setInterval(testRandMeterValue, 2000)
 
-function setHunger(inputPoints) {
+export function setHunger(inputPoints) {
 	hungerPoints += inputPoints
 	hungerPoints = clamp(hungerPoints, 0, 1)
+	if (!hungerPoints) hungerPoints = 0
 
 	hungerMeter.querySelector(".meter").setAttribute("value", hungerPoints)
 	localStorage.setItem("hungerPoints", hungerPoints)
 }
-setInterval(setHunger.bind(null, -0.02), 4000)
+setInterval(setHunger.bind(null, -0.02), 1000)
 
 function addToPoints() {
 	let points = localStorage.getItem("points")
@@ -100,3 +104,7 @@ document.addEventListener("DOMContentLoaded", () => {
 function clamp(value, min, max) {
 	return Math.max(min, Math.min(value, max))
 }
+
+document.addEventListener("dragover", (event) => {
+	event.preventDefault() // prevents items from springing back when dragged
+})

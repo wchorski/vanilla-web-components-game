@@ -146,11 +146,28 @@ body {
 	-webkit-user-drag: none;
 	-moz-user-drag: none;
 	-ms-user-drag: none;
+	user-select: none;
+}
+
+.draggable {
+	user-select: none;
 }
 
 .drag-cursor {
-	cursor: none;
+	cursor: url("./sprites/glove-pinch.png"), auto;
 }
+
+/* #basket {
+	position: absolute;
+	top: 200px;
+	width: 150px;
+	height: 150px;
+	background-color: #f8c61d;
+	display: grid;
+	place-content: center;
+	margin: 1rem;
+	border-radius: 20px;
+} */
 
 .no-select {
 	user-select: none;
@@ -162,6 +179,7 @@ img {
 
 .character {
 	cursor: url("./sprites/glove-open.png"), auto;
+	z-index: 1;
 }
 
 .number-counter {
@@ -187,20 +205,54 @@ img {
 	font-size: 5rem;
 }
 
-.bg-img {
+.playfield-img {
 	position: absolute;
 	image-rendering: pixelated;
 	width: 900px;
 	height: 900px;
+	pointer-events: none;
 }
 
 .playfield {
 	/* background-image: url("sprites/garden.png"); */
-
 	position: relative;
 	/* position: absolute; */
 	width: 900px;
 	height: 900px;
+	z-index: 0;
+}
+
+#shop {
+	z-index: 10;
+	display: block;
+	position: relative;
+	width: 150px;
+	height: 900px;
+	margin-left: auto;
+	font-size: 35px;
+	transform: translateX(100%);
+	background-color: salmon;
+	border-right: solid 5px #d86e62;
+	border-bottom: solid 5px #d86e62;
+}
+
+#shop > h2 {
+	font-size: 2rem;
+	margin: 0;
+	padding-inline: 1rem;
+	padding-top: 1rem;
+}
+
+#shop > ul {
+	border-radius: 0 10px 10px 0;
+	padding: 1rem;
+	list-style: none;
+	display: grid;
+	gap: 1rem;
+}
+
+#shop > ul > li {
+	border-bottom: dotted #d86e62 3px;
 }
 
 /* cred - https://codepen.io/punkydrewster713/pen/LYYQBEZ */
