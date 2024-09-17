@@ -21,7 +21,7 @@ class CharacterSprite extends HTMLElement {
 		const emote_wrap = document.createElement("div")
 		emote_wrap.classList.add("emote_wrap")
 		const emote = document.createElement("img")
-		emote.src = "chaos/emote.png"
+		emote.src = "./sprites/chao-emote-v2.png"
 		emote.alt = "Character Emote"
 		emote.classList.add("char_emote")
 
@@ -32,7 +32,7 @@ class CharacterSprite extends HTMLElement {
 		sprite_wrap.appendChild(this.sprite)
 
 		const dropZone = document.createElement("drop-zone")
-		this.appendChild(dropZone)
+		sprite_wrap.appendChild(dropZone)
 
 		this.updateDirection()
 	}

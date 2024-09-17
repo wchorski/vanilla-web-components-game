@@ -27,7 +27,7 @@ function moveCharacter() {
 moveCharacter()
 setInterval(moveCharacter, 10000)
 
-const directions = ["face_down", "face_up", "face_left"]
+const directions = ["face_down", "face_up", "face_left", "face_right"]
 // const directions = ["face_down", "face_up", "face_left", "face_right", "anger", "expressionless", "sitting"]
 let currentDirectionIndex = 0
 
@@ -79,6 +79,24 @@ function addToPoints() {
 	localStorage.setItem("points", points)
 
 	animPoints()
+}
+export function buyItemWithPoints(inputPoints) {
+	let points = localStorage.getItem("points")
+		? parseInt(localStorage.getItem("points"))
+		: 0
+
+	if (inputPoints > points) {
+		console.log("!!! not enough points to buy item")
+		return false
+	}
+
+	points -= inputPoints
+	pointsDisplay.textContent = points
+	localStorage.setItem("points", points)
+
+	animPoints()
+
+	return true
 }
 
 function initGame() {

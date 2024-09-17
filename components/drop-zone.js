@@ -14,15 +14,13 @@ class DropZone extends HTMLElement {
       <style>
         drop-zone {
           position: absolute;
-          top: 200px;
-          width: 150px;
-          height: 150px;
+          top: 0;
+          width: 24px;
+          height: 24px;
           background-color: transparent;
           display: grid;
           place-content: center;
-          margin: 1rem;
-          border: dotted 1px #ffffffa3;
-          border-radius: 20px;
+          // border: dotted 1px #ffffffa3;
           // box-shadow: inset 2px 2px 5px 6px #0000006e;
           transition-property: background, filter;
           transition-duration: .3s;
@@ -37,9 +35,6 @@ class DropZone extends HTMLElement {
           pointer-events: none;
         }
       </style>
-
-
-      <p> drop zone </p>
     `
 
 		this.innerHTML = html

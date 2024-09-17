@@ -5,8 +5,12 @@ class FruitItem extends HTMLElement {
 	constructor() {
 		super()
 		this.type = "round"
-		this.x = 30
-		this.y = 30
+		const maxX = window.playfield.clientWidth - character.offsetWidth
+		const maxY = window.playfield.clientHeight - character.offsetHeight
+		const randomX = Math.random() * maxX
+		const randomY = Math.random() * maxY
+		this.x = randomX
+		this.y = randomY
 		this.image = this.querySelector("img")
 		this.hungerValue = 0.3
 	}
@@ -16,17 +20,17 @@ class FruitItem extends HTMLElement {
         fruit-item {
 
           position: absolute;
-          width: 76px;
-          height: 76px;
+          width: 16px;
+          height: 16px;
           overflow: hidden;
           z-index: 9;
 
           img {
-            /* animation-name: animFruitSprite; */
-            animation-duration: 1s;
+            // animation-name: animFruitSprite;
+            animation-duration: 10s;
             animation-timing-function: steps(7);
             animation-iteration-count: infinite;
-            width: 76px;
+            width: auto;
             pointer-events: none;
           }
         }
@@ -36,7 +40,7 @@ class FruitItem extends HTMLElement {
             transform: translate3d(0, 0px, 0);
           }
           to {
-            transform: translate3d(0, -502px, 0);
+            transform: translate3d(0, calc(16px * -7), 0);
           }
         }
 
@@ -47,37 +51,37 @@ class FruitItem extends HTMLElement {
         }
         fruit-item.curved {
           img{
-            transform: translate3d(0, -76px, 0);
+            transform: translate3d(0, calc(16px * -1), 0);
           }
         }
         fruit-item.heart {
           img{
-            transform: translate3d(0, -152px, 0);
+            transform: translate3d(0, calc(16px * -2), 0);
           }
         }
         fruit-item.hex {
           img{
-            transform: translate3d(0, -228px, 0);
+            transform: translate3d(0, calc(16px * -3), 0);
           }
         }
         fruit-item.tri {
           img{
-            transform: translate3d(0, -290px, 0);
+            transform: translate3d(0, calc(16px * -4), 0);
           }
         }
         fruit-item.drop {
           img{
-            transform: translate3d(0, -366px, 0);
+            transform: translate3d(0, calc(16px * -5), 0);
           }
         }
         fruit-item.square {
           img{
-            transform: translate3d(0, -432px, 0);
+            transform: translate3d(0, calc(16px * -6), 0);
           }
         }
       </style>
      
-      <img class="icon no-select" src="./sprites/fruits.png" alt="Fruit item" />
+      <img class="icon no-select" src="./sprites/fruits-v2.png" alt="Fruit item" />
     `
 		this.innerHTML = html
 		this.type = this.getAttribute("type") || this.type
