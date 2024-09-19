@@ -1,0 +1,190 @@
+/* cred - https://codepen.io/punkydrewster713/pen/LYYQBEZ */
+/* cred - https://www.youtube.com/watch?v=ekI7vjkFrGA*/
+
+.character {
+	/* sprite scale */
+	--pixel-size: 1;
+	/* original sprite size */
+	--char-h: 24px;
+	--char-w: 24px;
+	--sheet-w: 286px;
+	--anim-frames: 4;
+	--movement-speed: 1900;
+	/* position: relative; */
+	position: absolute;
+	display: block;
+	left: 0;
+	top: 0;
+	width: fit-content;
+	transition-property: transform;
+	transition-duration: var(--move-speed);
+	transition-timing-function: linear;
+}
+
+.sprite_wrap {
+	width: 24px;
+	height: 24px;
+	/* width: calc(var(--char-w) * var(--pixel-size) + var(--canvas-overflow)); */
+	/* height: calc(var(--char-h) * var(--pixel-size) + var(--canvas-overflow)); */
+	overflow: hidden;
+	position: relative;
+	/* border: dotted white 1px; */
+	display: block;
+}
+
+.character:has(.sprite_wrap .face_up) .emote_wrap,
+.character:has(.sprite_wrap .face_right) .emote_wrap {
+	transform: scaleX(-1);
+}
+.sprite_wrap:has(.face_right) {
+	transform: scaleX(-1);
+}
+
+.emote_wrap {
+	width: 24px;
+	height: 16px;
+	overflow: hidden;
+	position: relative;
+	/* border: dotted greenyellow 1px; */
+	display: block;
+	/* left: 70px; */
+}
+
+img.char_emote {
+	width: auto;
+	image-rendering: pixelated;
+	position: absolute;
+	image-rendering: pixelated;
+	animation-name: animEmoteBall;
+	animation-duration: 1200ms;
+	animation-timing-function: steps(2);
+	animation-iteration-count: infinite;
+	bottom: 0;
+}
+
+.char_spritesheet {
+	image-rendering: pixelated;
+	animation-name: animSpritesheet;
+	animation-play-state: running;
+	animation-duration: 1900ms;
+	/* animation-timing-function: steps(calc(var(--anim-frames) - 1)); */
+	animation-timing-function: steps(var(--anim-frames));
+	animation-iteration-count: infinite;
+	/* animation-direction: alternate; */
+	/* width: calc(var(--sheet-w) * var(--pixel-size)); */
+	position: absolute;
+}
+.char_shadow {
+	image-rendering: pixelated;
+	position: absolute;
+	/* width: calc(var(--char-w) * var(--pixel-size)); */
+	width: 24px;
+	bottom: 0;
+	/* height: calc(var(--char-h) * var(--pixel-size)); */
+}
+
+.face_down {
+	top: 0;
+}
+.face_left {
+	top: calc(var(--char-h) * var(--pixel-size) * -1);
+	/* top: -24px; */
+}
+.face_right {
+	top: calc(var(--char-h) * var(--pixel-size) * -1);
+}
+.face_up {
+	top: calc(var(--char-h) * var(--pixel-size) * -2);
+}
+.angry {
+	top: calc(var(--char-h) * var(--pixel-size) * -3);
+}
+.no {
+	top: calc(var(--char-h) * var(--pixel-size) * -4);
+}
+.crouch {
+	top: calc(var(--char-h) * var(--pixel-size) * -5);
+}
+.crawl {
+	top: calc(var(--char-h) * var(--pixel-size) * -6);
+}
+.cry {
+	top: calc(var(--char-h) * var(--pixel-size) * -7);
+}
+.sway {
+	top: calc(var(--char-h) * var(--pixel-size) * -8);
+}
+.eat {
+	top: calc(var(--char-h) * var(--pixel-size) * -9);
+}
+.eat_favorite {
+	top: calc(var(--char-h) * var(--pixel-size) * -10);
+}
+.excite {
+	top: calc(var(--char-h) * var(--pixel-size) * -11);
+}
+.sleep {
+	top: calc(var(--char-h) * var(--pixel-size) * -12);
+}
+.excite_2 {
+	top: calc(var(--char-h) * var(--pixel-size) * -13);
+}
+.nasty {
+	top: calc(var(--char-h) * var(--pixel-size) * -14);
+}
+.point {
+	top: calc(var(--char-h) * var(--pixel-size) * -15);
+}
+.yawn {
+	top: calc(var(--char-h) * var(--pixel-size) * -16);
+}
+.sit_down {
+	top: calc(var(--char-h) * var(--pixel-size) * -17);
+}
+.think {
+	top: calc(var(--char-h) * var(--pixel-size) * -18);
+}
+.sit_left {
+	top: calc(var(--char-h) * var(--pixel-size) * -19);
+}
+
+@keyframes animSpritesheet {
+	from {
+		transform: translate3d(0, 0, 0);
+	}
+	to {
+		transform: translate3d(
+			calc(var(--char-w) * (var(--anim-frames)) * -1),
+			0,
+			0
+		);
+	}
+}
+
+.char_translate_paused {
+	animation-play-state: paused;
+}
+
+.char_translate_running {
+	animation-play-state: running;
+}
+
+/* ? didn't interpolate. setting anim in js */
+/* .char_translate {
+	--translate-current: translate(0px, 0px);
+	--translate-destination: translate(30px, 30px);
+	animation-name: translateChar;
+	animation-duration: 1900ms;
+	animation-timing-function: linear;
+	animation-iteration-count: 1;
+	animation-fill-mode: forwards;
+}
+
+@keyframes translateChar {
+	from {
+		transform: var(--translate-current);
+	}
+	to {
+		transform: var(--translate-destination);
+	}
+} */

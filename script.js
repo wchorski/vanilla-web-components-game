@@ -2,6 +2,7 @@
 // window.globalMessage = "Hello from the global scope!"
 window.g_DraggedElement = null
 window.playfield = document.getElementById("playfield")
+const characterActor = document.querySelector("#character")
 
 const pointsDisplay = document.getElementById("pointsDisplay")
 let points = localStorage.getItem("points")
@@ -10,6 +11,10 @@ let points = localStorage.getItem("points")
 const hungerMeter = document.getElementById("hungerMeter")
 let hungerPoints = localStorage.getItem("hungerPoints")
 	? parseFloat(localStorage.getItem("hungerPoints"))
+	: 1
+const sleepMeter = document.getElementById("sleepMeter")
+let sleepPoints = localStorage.getItem("sleepPoints")
+	? parseFloat(localStorage.getItem("sleepPoints"))
 	: 1
 
 function moveCharacter() {
@@ -24,20 +29,62 @@ function moveCharacter() {
 
 	character.style.transform = `translate(${randomX}px, ${randomY}px)`
 }
-moveCharacter()
-setInterval(moveCharacter, 10000)
+// moveCharacter()
+// setInterval(moveCharacter, 85000)
 
-const directions = ["face_down", "face_up", "face_left", "face_right"]
-// const directions = ["face_down", "face_up", "face_left", "face_right", "anger", "expressionless", "sitting"]
+// const directions = ["face_down", "face_up", "face_left", "face_right"]
+const directions = [
+	"face_still",
+	"face_down",
+	"face_up",
+	"face_left",
+	"face_right",
+	"anger",
+	"no",
+	"crouch",
+	"sway",
+	"eat",
+	"crawl",
+	"eat_favorite",
+	"excite",
+	"sleep",
+	"nasty",
+	"point",
+	"yawn",
+	"cry",
+	"sit_down",
+	"sit_left",
+]
 let currentDirectionIndex = 0
 
-function changeDirection() {
-	const characterSprite = document.querySelector("#character")
-	currentDirectionIndex = (currentDirectionIndex + 1) % directions.length
-	characterSprite.setAttribute("direction", directions[currentDirectionIndex])
-}
-changeDirection()
-setInterval(changeDirection, 8000)
+// function changeDirection() {
+// 	const characterSprite = document.querySelector("#character")
+// 	currentDirectionIndex = (currentDirectionIndex + 1) % directions.length
+// 	characterSprite.setAttribute("direction", directions[currentDirectionIndex])
+// }
+// changeDirection()
+// setInterval(changeDirection, 3000)
+
+setInterval(() => {
+	// Put the functions in an array (the pool)
+	const functionPool = [
+		() => characterActor.updateTranslate(),
+		() => characterActor.setSleep(),
+	]
+
+	// Function to trigger a random function from the pool
+	const triggerRandomFunction = () => {
+		const randomIndex = Math.floor(Math.random() * functionPool.length)
+		const selectedFunction = functionPool[randomIndex]
+		selectedFunction()
+	}
+
+	triggerRandomFunction()
+}, 3000)
+
+// setTimeout(() => {
+// 	characterActor.setSleep()
+// }, 5000)
 
 const ring_icon = document.querySelector(".ring-icon")
 
@@ -53,12 +100,28 @@ function animPoints() {
 function testRandMeterValue() {
 	// const hungerMeter = document.getElementById("hungerMeter")
 	// hungerMeter.querySelector(".meter").setAttribute("value", Math.random())
-	const sleepMeter = document.getElementById("sleepMeter")
-	sleepMeter.querySelector(".meter").setAttribute("value", Math.random())
+	// const sleepMeter = document.getElementById("sleepMeter")
+	// sleepMeter.querySelector(".meter").setAttribute("value", Math.random())
 	const energyMeter = document.getElementById("energyMeter")
 	energyMeter.querySelector(".meter").setAttribute("value", Math.random())
 }
 setInterval(testRandMeterValue, 2000)
+
+export function setSleep(inputPoints) {
+	sleepPoints += inputPoints
+	sleepPoints = clamp(sleepPoints, 0, 1)
+	if (!sleepPoints) sleepPoints = 1.0
+
+	sleepMeter.querySelector(".meter").setAttribute("value", sleepPoints)
+	localStorage.setItem("sleepPoints", sleepPoints)
+}
+setInterval(() => {
+	//todo stop this if currently sleeping
+	//todo not able to feed if sleeping
+	//move to bigger state machine that only allows one state at a time?
+	// when other states are triggered, that is when sleep is removed?
+	setSleep(-0.03)
+}, 2000)
 
 export function setHunger(inputPoints) {
 	hungerPoints += inputPoints
@@ -102,6 +165,7 @@ export function buyItemWithPoints(inputPoints) {
 function initGame() {
 	pointsDisplay.textContent = points
 	hungerMeter.querySelector(".meter").setAttribute("value", hungerPoints)
+	sleepMeter.querySelector(".meter").setAttribute("value", sleepPoints)
 }
 
 document.addEventListener("DOMContentLoaded", () => {
