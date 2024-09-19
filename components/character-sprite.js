@@ -1,17 +1,24 @@
-import { setSleep } from "../script.js"
+import {
+	setEnergy,
+	setHunger,
+	setSleep,
+	triggerRandomRoutine,
+} from "../script.js"
 
 class CharacterSprite extends HTMLElement {
 	constructor() {
 		super()
 		this.sprite = null
-		this.state = "face_still"
+		this.state = "sit_down"
+		this.controller = null
 		this.sleepPoints = 1.0
 		//todo either
 		//1. distance travel ups or lowers speed
 		//2. speed up or low depending on distance
-		this.speed = 1900
+		this.speed = 7000
 		this.x = 0
 		this.y = 0
+		this.translateAnim = null
 	}
 
 	connectedCallback() {
@@ -44,7 +51,8 @@ class CharacterSprite extends HTMLElement {
 		const dropZone = document.createElement("drop-zone")
 		sprite_wrap.appendChild(dropZone)
 
-		this.updateState()
+		this.state = this.getAttribute("state") || this.state
+		this.updateAnimation()
 		// this.updateTranslate()
 	}
 
@@ -57,12 +65,24 @@ class CharacterSprite extends HTMLElement {
 			if (name === "src" && oldValue !== newValue) {
 				this.sprite.src = newValue
 			} else if (name === "state") {
-				this.updateState()
+				this.updateAnimation()
 			}
 		}
 	}
 
-	updateTranslate() {
+	abortOngoingRoutine() {
+		if (this.controller) {
+			this.controller.abort()
+		}
+	}
+
+	transformRoutine() {
+		this.abortOngoingRoutine()
+		this.controller = new AbortController()
+		const signal = this.controller.signal
+
+		this.classList.remove("char_translate_paused")
+
 		const playfieldBounds = {
 			x: window.playfield.clientWidth - this.offsetWidth,
 			y: window.playfield.clientHeight - this.offsetHeight,
@@ -94,8 +114,8 @@ class CharacterSprite extends HTMLElement {
 			"--translate-destination"
 		)
 
-		this.style.transform = `translate(${current})`
-		this.animate(
+		// this.style.transform = `translate(${current})`
+		this.translateAnim = this.animate(
 			[
 				{ transform: `translate(${current})` },
 				{ transform: `translate(${destination})` },
@@ -106,11 +126,8 @@ class CharacterSprite extends HTMLElement {
 				fill: "forwards",
 			}
 		)
-		//? reset to stop when done anim
-		setTimeout(() => {
-			this.state = "face_still"
-			this.updateState()
-		}, this.speed)
+
+		// this.animation.pause()
 
 		const cardinalDirection = getDominantDirection(currPos, destinationPos)
 
@@ -132,13 +149,178 @@ class CharacterSprite extends HTMLElement {
 				this.state = "face_still"
 				break
 		}
-		this.updateState()
+		this.updateAnimation()
 
 		this.x = destinationPos.x
 		this.y = destinationPos.y
+
+		const duration = this.speed
+		const iterations = 3
+		const timeDelay = duration / iterations
+
+		const iterateWithPause = async (onFinish) => {
+			for (let i = 0; i < iterations; i++) {
+				if (signal.aborted) return
+
+				await new Promise((resolve) => setTimeout(resolve, timeDelay))
+				//? splits the total reduction across num of iterations
+				setSleep(-0.3 / iterations)
+				setHunger(-0.1 / iterations)
+				setEnergy(-0.4 / iterations)
+			}
+
+			if (signal.aborted) return
+			onFinish()
+		}
+
+		const finish = () => {
+			this.state = "face_still"
+			this.updateAnimation()
+			triggerRandomRoutine([
+				// () => this.transformRoutine(),
+				() => this.sleepRoutine(),
+				() => this.sitRoutine(),
+			])
+		}
+
+		iterateWithPause(finish)
+
+		// // //? reset to stop when done anim
+		// setTimeout(() => {
+		// 	this.state = "face_still"
+		// 	this.updateAnimation()
+		// 	triggerRandomRoutine([
+		// 		// () => this.transformRoutine(),
+		// 		() => this.sleepRoutine(),
+		// 	])
+		// }, this.speed)
 	}
 
-	updateState() {
+	sitRoutine() {
+		this.abortOngoingRoutine()
+		this.controller = new AbortController()
+		const signal = this.controller.signal
+
+		this.state = "sit_down"
+		this.updateAnimation()
+		const duration = 5000
+		const iterations = 8
+		const timeDelay = duration / iterations
+
+		this.classList.add("char_translate_paused")
+
+		const iterateWithPause = async (onFinish) => {
+			for (let i = 0; i < iterations; i++) {
+				if (signal.aborted) return
+
+				await new Promise((resolve) => setTimeout(resolve, timeDelay))
+				setSleep(-0.05 / iterations)
+				setHunger(-0.01 / iterations)
+				setEnergy(-0.02 / iterations)
+			}
+			if (signal.aborted) return
+			onFinish()
+		}
+
+		const finish = () => {
+			triggerRandomRoutine([
+				() => this.transformRoutine(),
+				() => this.sleepRoutine(),
+				// () => this.sitRoutine(),
+			])
+		}
+
+		iterateWithPause(finish)
+	}
+
+	//todo stop other routines even if in middle
+	eatRoutine(hungerValue) {
+		this.abortOngoingRoutine()
+		this.controller = new AbortController()
+		const signal = this.controller.signal
+
+		if (this.translateAnim) {
+			this.translateAnim.pause()
+			const rect = this.getBoundingClientRect()
+
+			this.x = rect.left
+			this.y = rect.top
+
+			// const computedStyle = getComputedStyle(this)
+			// const currTransform = computedStyle.transform
+			// console.log(currTransform)
+		}
+		this.state = "eat"
+		this.updateAnimation()
+		this.classList.add("char_translate_paused")
+		// todo make these input var for func
+		const duration = 8000
+		const iterations = 13
+		const timeDelay = duration / iterations
+
+		const iterateWithPause = async (onFinish) => {
+			for (let i = 0; i < iterations; i++) {
+				if (signal.aborted) return
+
+				await new Promise((resolve) => setTimeout(resolve, timeDelay))
+				setSleep(0.1 / iterations)
+				setEnergy(0.15 / iterations)
+				setHunger(hungerValue / iterations)
+			}
+
+			if (signal.aborted) return
+			onFinish()
+		}
+
+		const finish = () => {
+			triggerRandomRoutine([
+				() => this.transformRoutine(),
+				() => this.sitRoutine(),
+				() => this.sleepRoutine(),
+			])
+		}
+
+		iterateWithPause(finish)
+	}
+
+	sleepRoutine() {
+		this.abortOngoingRoutine()
+		this.controller = new AbortController()
+		const signal = this.controller.signal
+
+		this.classList.add("char_translate_paused")
+		this.state = "sleep"
+		this.updateAnimation()
+		// todo make these input var for func
+		const iterations = 10
+		const timeDelay = 500
+
+		const iterateWithPause = async (onFinish) => {
+			for (let i = 0; i < iterations; i++) {
+				if (signal.aborted) return
+
+				await new Promise((resolve) => setTimeout(resolve, timeDelay))
+				setSleep(0.35 / iterations)
+				setEnergy(0.25 / iterations)
+				setHunger(-0.01 / iterations)
+			}
+
+			if (signal.aborted) return
+			onFinish()
+		}
+
+		const finish = () => {
+			triggerRandomRoutine([
+				() => this.transformRoutine(),
+				() => this.sitRoutine(),
+				// () => this.sleepRoutine(),
+			])
+		}
+
+		iterateWithPause(finish)
+	}
+
+	updateAnimation() {
 		const state = this.getAttribute("state")
 		const states = [
 			"face_still",
@@ -174,19 +356,6 @@ class CharacterSprite extends HTMLElement {
 				this.sprite.classList.add(this.state)
 			}
 		}
-	}
-
-	setSleep() {
-		this.state = "sleep"
-		this.updateState()
-		const sleepIntervalId = setInterval(() => {
-			// this.sleepPoints += 0.2
-			setSleep(0.06)
-		}, 2000)
-
-		setTimeout(() => {
-			clearInterval(sleepIntervalId)
-		}, 2000)
 	}
 }
 

@@ -7,109 +7,9 @@
 	--move-speed: 20s;
 }
 
-progress {
-	/* --background: transparent; */
-	--background: repeating-linear-gradient(
-		45deg,
-		hsl(0, 0%, 26%),
-		hsl(0, 0%, 26%) 10px,
-		hsl(0, 0%, 20%) 10px,
-		hsl(0, 0%, 22%) 20px
-	);
-	--optimum: repeating-linear-gradient(
-		45deg,
-		hsl(var(--color-hue), 100%, 56%),
-		hsl(var(--color-hue), 100%, 56%) 10px,
-		hsl(var(--color-hue), 100%, 45%) 10px,
-		hsl(var(--color-hue), 100%, 42%) 20px
-	);
-	--sub-optimum: repeating-linear-gradient(
-		45deg,
-		hsl(179, 100%, 46%),
-		hsl(179, 100%, 46%) 10px,
-		hsl(179, 100%, 40%) 10px,
-		hsl(179, 100%, 42%) 20px
-	);
-	--sub-sub-optimum: repeating-linear-gradient(
-		45deg,
-		hsl(179, 100%, 36%),
-		hsl(179, 100%, 36%) 10px,
-		hsl(179, 100%, 30%) 10px,
-		hsl(179, 100%, 32%) 20px
-	);
-	-webkit-appearance: none;
-	appearance: none;
-	-moz-appearance: none;
-	background: var(--background);
-	display: block;
-	margin-bottom: 1em;
-	height: 10px;
-	width: 100px;
-	border: none;
-	border-radius: 30px;
+.meters_wrap {
+	padding-inline: 10px;
 }
-
-progress[value] {
-	/* Reset the default appearance */
-	-webkit-appearance: none;
-	-moz-appearance: none;
-	appearance: none;
-
-	/* Get rid of default border in Firefox. */
-	border: none;
-
-	/* Dimensions */
-	/* width: 250px; */
-	/* height: 20px; */
-}
-progress::-webkit-progress-bar {
-	background-color: var(
-		--background
-	); /* Background of the progress bar (track) */
-	border-radius: 15px;
-}
-progress[value]::-moz-progress-bar {
-	background: var(--optimum);
-	border-radius: 7px;
-	transition-property: color, background, width;
-	transition-duration: 0.5s;
-	transition-timing-function: ease-in;
-}
-progress[value]::-webkit-progress-value {
-	background: var(--optimum);
-	border-radius: 7px;
-	transition-property: color, background, width;
-	transition-duration: 0.5s;
-	transition-timing-function: ease-in;
-}
-
-/* meter::-webkit-meter-bar {
-	background: var(--background);
-}
-
-meter:-moz-meter-optimum::-moz-meter-bar {
-	background: var(--optimum);
-}
-
-meter::-webkit-meter-optimum-value {
-	background: var(--optimum);
-}
-
-meter:-moz-meter-sub-optimum::-moz-meter-bar {
-	background: var(--sub-optimum);
-}
-
-meter::-webkit-meter-suboptimum-value {
-	background: var(--sub-optimum);
-}
-
-meter:-moz-meter-sub-sub-optimum::-moz-meter-bar {
-	background: var(--sub-sub-optimum);
-}
-
-meter::-webkit-meter-even-less-good-value {
-	background: var(--sub-sub-optimum);
-} */
 
 button {
 	padding: 0.3rem;
@@ -136,6 +36,7 @@ body {
 	margin: 0;
 
 	cursor: url("./sprites/glove-point.png"), auto;
+	font-size: 10px;
 }
 
 .disable-drag {

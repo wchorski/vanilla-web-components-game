@@ -7,21 +7,100 @@ class HealthMeter extends HTMLElement {
 	}
 
 	connectedCallback() {
-		this.meter = document.createElement("progress")
+		this.innerHTML = `
+      <style>
+        health-meter progress {
+          /* --background: transparent; */
+          --background: repeating-linear-gradient(
+            45deg,
+            hsl(0, 0%, 26%),
+            hsl(0, 0%, 26%) 5px,
+            hsl(0, 0%, 20%) 5px,
+            hsl(0, 0%, 22%) 10px
+          );
+          --optimum: repeating-linear-gradient(
+            45deg,
+            hsl(var(--color-hue), 100%, 56%),
+            hsl(var(--color-hue), 100%, 56%) 5px,
+            hsl(var(--color-hue), 100%, 45%) 5px,
+            hsl(var(--color-hue), 100%, 42%) 10px
+          );
+          --sub-optimum: repeating-linear-gradient(
+            45deg,
+            hsl(179, 100%, 46%),
+            hsl(179, 100%, 46%) 10px,
+            hsl(179, 100%, 40%) 10px,
+            hsl(179, 100%, 42%) 20px
+          );
+          --sub-sub-optimum: repeating-linear-gradient(
+            45deg,
+            hsl(179, 100%, 36%),
+            hsl(179, 100%, 36%) 10px,
+            hsl(179, 100%, 30%) 10px,
+            hsl(179, 100%, 32%) 20px
+          );
+          overflow: hidden;
+          -webkit-appearance: none;
+          appearance: none;
+          -moz-appearance: none;
+          background: var(--background);
+          display: block;
+          margin-bottom: 1em;
+          height: 10px;
+          width: 100px;
+          border: none;
+          border-radius: 30px;
+        }
+
+        health-meter progress[value] {
+          /* Reset the default appearance */
+          -webkit-appearance: none;
+          -moz-appearance: none;
+          appearance: none;
+
+          /* Get rid of default border in Firefox. */
+          border: none;
+
+          /* Dimensions */
+          /* width: 250px; */
+          /* height: 20px; */
+        }
+        health-meter progress::-webkit-progress-bar {
+          background-color: var(
+            --background
+          ); /* Background of the progress bar (track) */
+          border-radius: 15px;
+        }
+        health-meter progress[value]::-moz-progress-bar {
+          background: var(--optimum);
+          border-radius: 7px;
+          transition-property: color, background, width;
+          transition-duration: 0.2s;
+          transition-timing-function: ease-in;
+        }
+        health-meter progress[value]::-webkit-progress-value {
+          background: var(--optimum);
+          border-radius: 7px;
+          transition-property: color, background, width;
+          transition-duration: 0.2s;
+          transition-timing-function: ease-in;
+        }
+        
+      </style>
+      <label>${this.label}</label>
+      <progress value="0.79375" max="1" class="meter" ></progress>
+    `
+		this.meter = this.querySelector(".meter")
 		this.meter.value = this.getAttribute("value") || this.value
 		this.meter.min = this.getAttribute("min") || 0
 		this.meter.max = this.getAttribute("max") || 1.0
-		this.meter.classList.add("meter")
 		this.meter.style.setProperty(
 			"--color-hue",
 			this.getAttribute("hue") || this.hue
 		)
 
-		const label = document.createElement("label")
-		label.innerText = this.getAttribute("label") || this.label
-
-		this.appendChild(label)
-		this.appendChild(this.meter)
+		const labelEl = this.querySelector("label")
+		labelEl.innerText = this.getAttribute("label") || this.label
 
 		// this.updateDirection()
 	}
@@ -29,37 +108,6 @@ class HealthMeter extends HTMLElement {
 	static get observedAttributes() {
 		return ["value", "min", "max", "label", "hue"]
 	}
-
-	// attributeChangedCallback(name, oldValue, newValue) {
-	// 	if (this.sprite) {
-	// 		if (name === "src" && oldValue !== newValue) {
-	// 			this.sprite.src = newValue
-	// 		} else if (name === "direction") {
-	// 			this.updateDirection()
-	// 		}
-	// 	}
-	// }
-
-	// updateDirection() {
-	// 	const direction = this.getAttribute("direction")
-	// 	const directions = [
-	// 		"face_down",
-	// 		"face_right",
-	// 		"face_left",
-	// 		"face_up",
-	// 		"angry",
-	// 		"expressionless",
-	// 		"sitting",
-	// 	]
-
-	// 	if (this.sprite) {
-	// 		directions.forEach((dir) => this.sprite.classList.remove(dir))
-
-	// 		if (direction && directions.includes(direction)) {
-	// 			this.sprite.classList.add(direction)
-	// 		}
-	// 	}
-	// }
 }
 
 customElements.define("health-meter", HealthMeter)

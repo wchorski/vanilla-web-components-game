@@ -10,7 +10,7 @@ class DropZone extends HTMLElement {
 		this.class = "drop-zone"
 	}
 	connectedCallback() {
-		const html = String.raw`
+		this.innerHTML = String.raw`
       <style>
         drop-zone {
           position: absolute;
@@ -37,7 +37,6 @@ class DropZone extends HTMLElement {
       </style>
     `
 
-		this.innerHTML = html
 		this.classList.add(this.getAttribute("class"))
 		this.classList.add("drop-zone")
 		this.prop = this.getAttribute("prop") || this.prop
@@ -97,8 +96,11 @@ class DropZone extends HTMLElement {
 			this.classList.remove("over")
 
 			//todo add chao feed from fruit + hungerPoints
-			setHunger(hungerValue)
-			//todo remove fruit from playfield
+			// setHunger(hungerValue)
+
+			const thisCharacter = this.parentNode.parentNode
+			thisCharacter.eatRoutine(hungerValue)
+
 			window.g_DraggedElement.remove()
 			window.g_DraggedElement = null
 
