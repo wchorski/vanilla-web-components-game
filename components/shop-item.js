@@ -8,7 +8,9 @@ class ShopItem extends HTMLElement {
 		super()
 		// props have 3 places `constructor()`, `this.getAttribute("prop")`, and `observedAttributes()`
 		this.type = "round"
+		this.hungerValue = 0.3
 		this.cost = 30
+		this.onTap = this.onTap.bind(this)
 	}
 	connectedCallback() {
 		//todo how to get html syntax highlighting?
@@ -85,6 +87,7 @@ class ShopItem extends HTMLElement {
 
 		this.innerHTML = html
 		this.type = this.getAttribute("type") || this.type
+		this.hungerValue = this.getAttribute("hungerValue") || this.hungerValue
 		this.cost = parseInt(this.getAttribute("cost") || this.cost)
 		// this.setAttribute("draggable", "true")
 		this.classList.add("shop-item")
@@ -95,28 +98,25 @@ class ShopItem extends HTMLElement {
 
 		//? functions
 		// this.onDrag()
-		this.onClick()
+		this.addEventListener("pointerdown", this.onTap)
 	}
 
 	static get observedAttributes() {
 		return ["type", "cost"]
 	}
 
-	onClick() {
-		this.addEventListener("mousedown", (e) => {
-			console.log("shop: ", this.type)
-			const isEnoughMoney = buyItemWithPoints(this.cost)
-			if (!isEnoughMoney) return
-			const purchasedFruitItem = document.createElement("fruit-item")
-			purchasedFruitItem.setAttribute("type", this.type)
-			//todo howto get `hungerValue` from fruit-item component. or maybe use some sort of global switch statement with this.type
-			purchasedFruitItem.setAttribute("hungerValue", parseFloat(0.3))
-			window.playfield.appendChild(purchasedFruitItem)
-			//todo
-			// 1. remove from ringPoints
-			// 2. randomly place the fruit
-			// 3. try to spawn while dragging fruit (onmousdown?)
-		})
+	onTap(e) {
+		const isEnoughMoney = buyItemWithPoints(this.cost)
+		if (!isEnoughMoney) return
+		const purchasedFruitItem = document.createElement("fruit-item")
+		purchasedFruitItem.setAttribute("type", this.type)
+		//todo howto get `hungerValue` from fruit-item component. or maybe use some sort of global switch statement with this.type
+		purchasedFruitItem.setAttribute("hungerValue", this.hungerValue)
+		window.playfield.appendChild(purchasedFruitItem)
+		//todo
+		// 1. remove from ringPoints
+		// 2. randomly place the fruit
+		// 3. try to spawn while dragging fruit (onmousdown?)
 	}
 
 	// onDrag() {

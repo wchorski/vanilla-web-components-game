@@ -1,6 +1,8 @@
 // drag example - https://jsfiddle.net/LULbV/
 // drag cred - https://stackoverflow.com/questions/11169554/how-to-style-dragged-element
 
+import { hungerPoints } from "../script.js"
+
 class FruitItem extends HTMLElement {
 	constructor() {
 		super()
@@ -13,6 +15,19 @@ class FruitItem extends HTMLElement {
 		this.y = randomY
 		this.image = this.querySelector("img")
 		this.hungerValue = 0.3
+
+		this.isDragging = false
+
+		this.onTouchStart = this.onTouchStart.bind(this)
+		this.onTouchMove = this.onTouchMove.bind(this)
+		this.onTouchEnd = this.onTouchEnd.bind(this)
+
+		// this.onMouseDown = this.onMouseDown.bind(this)
+		// this.onMouseMove = this.onMouseMove.bind(this)
+		// this.onMouseUp = this.onMouseUp.bind(this)
+
+		this.onDragStart = this.onDragStart.bind(this)
+		this.onDragEnd = this.onDragEnd.bind(this)
 	}
 	connectedCallback() {
 		const html = String.raw`
@@ -24,6 +39,7 @@ class FruitItem extends HTMLElement {
           height: 16px;
           overflow: hidden;
           z-index: 9;
+          touch-action: none;
 
           img {
             // animation-name: animFruitSprite;
@@ -80,10 +96,8 @@ class FruitItem extends HTMLElement {
           }
         }
       </style>
-     
       <img class="icon no-select" src="./sprites/fruits-v2.png" alt="Fruit item" />
     `
-		this.innerHTML = html
 		this.type = this.getAttribute("type") || this.type
 		this.hungerValue = this.getAttribute("hungerValue") || this.hungerValue
 
@@ -93,15 +107,23 @@ class FruitItem extends HTMLElement {
 			this.getAttribute("type") || this.type
 		)
 
-		this.image = this.querySelector("img")
-
 		this.style.left = `${this.getAttribute("x") || this.x}px`
 		this.style.top = `${this.getAttribute("y") || this.y}px`
-
-		this.iconImage = this.querySelector("img")
 		this.setAttribute("draggable", "true")
-		this.onDrag()
-		// this.onClick()
+
+		// Touch events
+		this.addEventListener("touchstart", this.onTouchStart)
+		this.addEventListener("touchmove", this.onTouchMove, { passive: false })
+		this.addEventListener("touchend", this.onTouchEnd)
+
+		// mouse Events
+		this.addEventListener("dragstart", this.onDragStart)
+		this.addEventListener("dragend", this.onDragEnd)
+
+		this.innerHTML = html
+
+		this.image = this.querySelector("img")
+		this.iconImage = this.querySelector("img")
 	}
 
 	static get observedAttributes() {
@@ -114,74 +136,94 @@ class FruitItem extends HTMLElement {
 	// 	})
 	// }
 
-	onDrag() {
-		let offsetX = 0
-		let offsetY = 0
+	onDragStart(e) {
+		this.classList.add("drag-cursor")
+		// window.g_DraggedElement = e.target
 
-		this.addEventListener(
-			"dragstart",
-			(event) => {
-				this.classList.add("drag-cursor")
-				// event.dataTransfer.setData("text/html", event.target.outerHTML)
-				//? do i need this line?
-				event.dataTransfer.effectAllowed = "copy"
+		this.style.opacity = "0.2"
+	}
+	onDragEnd(e) {
+		const offset = {
+			x: 0,
+			y: 0,
+		}
+		const { clientX, clientY } = e
+		const newX = clientX - offset.x
+		const newY = clientY - offset.y
+		this.style.left = `${newX}px`
+		this.style.top = `${newY}px`
+		this.classList.remove("drag-cursor")
+		this.style.opacity = "1"
 
-				window.g_DraggedElement = event.target
+		const elementsFromPoint = document.elementsFromPoint(newX, newY)
+		const dropEl = elementsFromPoint[1]
+		if (dropEl.tagName === "DROP-ZONE") this.onDropInZone(dropEl)
+	}
 
-				//todo old stuff
-				// const previewImg = new Image()
+	// --- Touch event handlers ---
+	onTouchStart(e) {
+		const touch = e.touches[0]
+		this.startDrag(touch.clientX, touch.clientY)
+	}
 
-				// const previewSrc = (() => {
-				// 	switch (this.type) {
-				// 		case "round":
-				// 			return "./sprites/fruit-round.png"
-				// 		case "curved":
-				// 			return "./sprites/fruit-round.png"
-				// 		case "tri":
-				// 			return "./sprites/fruit-round.png"
-				// 		// is a 1x1 pixel transparent image.
-				// 		default:
-				// 			return "data:image/gif;base64,R0lGODlhAQABAIAAAAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="
-				// 	}
-				// })()
-				// previewImg.src = previewSrc
-				// // event.dataTransfer.setDragImage(previewImg, 0, 0)
-				// // event.dataTransfer.setDragImage(new Image(), 0, 0)
+	onTouchMove(e) {
+		if (!this.isDragging) return
+		e.preventDefault() // Prevents scrolling or window shifting
+		const touch = e.touches[0]
+		this.moveElement(touch.clientX, touch.clientY)
+	}
 
-				// event.dataTransfer.dropEffect = "copy"
-				// offsetX = event.clientX - this.getBoundingClientRect().left
-				// offsetY = event.clientY - this.getBoundingClientRect().top
-				// // event.dataTransfer.setData("text/plain", "") // Required for drag to work
-			},
-			false
+	onTouchEnd(e) {
+		this.isDragging = false
+
+		const touch = e.changedTouches[0]
+
+		const elementsFromPoint = document.elementsFromPoint(
+			touch.clientX,
+			touch.clientY
 		)
+		const dropEl = elementsFromPoint[1]
+		if (dropEl.tagName === "DROP-ZONE") this.onDropInZone(dropEl)
+	}
 
-		this.addEventListener("drag", (event) => {
-			// here I want to style the ghost element, not the source...
-		})
-		this.addEventListener("dragover", (event) => {
-			event.preventDefault()
+	// --- Shared logic for both touch and mouse ---
+	startDrag(x, y) {
+		const rect = this.getBoundingClientRect()
+		this.x = x - rect.left
+		this.x = y - rect.top
+		this.isDragging = true
+	}
 
-			event.dataTransfer.dropEffect = "copy"
-			return false
-		})
-		//? prob don't need them but keeping them around for ref
-		// this.addEventListener("dragenter", function (e) {
-		// 	this.classList.add("dragging")``
-		// })
+	moveElement(x, y) {
+		const newLeft = x - this.x
+		const newTop = y - this.x
+		this.style.left = `${newLeft}px`
+		this.style.top = `${newTop}px`
+	}
+	/**
+	 * @param {HTMLElement} target
+	 */
+	onDropInZone(target) {
+		this.classList.remove("over")
+		const thisCharacter = target.parentNode.parentNode
+		thisCharacter.eatRoutine(this.hungerValue)
 
-		// this.addEventListener("dragleave", function (e) {
-		// 	this.classList.remove("dragging")``
-		// })
+		if (hungerPoints < 0.9) {
+			this.remove()
+		}
 
-		this.addEventListener("dragend", (event) => {
-			const newX = event.clientX - offsetX
-			const newY = event.clientY - offsetY
-			this.style.left = `${newX}px`
-			this.style.top = `${newY}px`
-			this.classList.remove("drag-cursor")
-			// console.log("dragend: drop it like its hot")
-		})
+		return false
+	}
+
+	disconnectedCallback() {
+		// Touch events
+		this.removeEventListener("touchstart", this.onTouchStart)
+		this.removeEventListener("touchmove", this.onTouchMove, { passive: false })
+		this.removeEventListener("touchend", this.onTouchEnd)
+
+		// mouse Events
+		this.removeEventListener("dragstart", this.onDragStart)
+		this.removeEventListener("dragend", this.onDragEnd)
 	}
 }
 customElements.define("fruit-item", FruitItem)

@@ -7,6 +7,8 @@ class HealthMeter extends HTMLElement {
 	}
 
 	connectedCallback() {
+		this.label = this.getAttribute("label") || this.label
+
 		this.innerHTML = `
       <style>
         health-meter progress {
@@ -45,7 +47,6 @@ class HealthMeter extends HTMLElement {
           -moz-appearance: none;
           background: var(--background);
           display: block;
-          margin-bottom: 1em;
           height: 10px;
           width: 100px;
           border: none;
@@ -90,6 +91,7 @@ class HealthMeter extends HTMLElement {
       <label>${this.label}</label>
       <progress value="0.79375" max="1" class="meter" ></progress>
     `
+
 		this.meter = this.querySelector(".meter")
 		this.meter.value = this.getAttribute("value") || this.value
 		this.meter.min = this.getAttribute("min") || 0
@@ -99,14 +101,22 @@ class HealthMeter extends HTMLElement {
 			this.getAttribute("hue") || this.hue
 		)
 
-		const labelEl = this.querySelector("label")
-		labelEl.innerText = this.getAttribute("label") || this.label
-
 		// this.updateDirection()
 	}
 
 	static get observedAttributes() {
 		return ["value", "min", "max", "label", "hue"]
+	}
+
+	attributeChangedCallback(name, oldValue, newValue) {
+		if (name === "data-value") {
+			this.shadowRoot.querySelector("#content").innerText = `Value: ${newValue}`
+		}
+
+		if (name === "data-status") {
+			this.shadowRoot.querySelector("#content").style.color =
+				newValue === "active" ? "green" : "red"
+		}
 	}
 }
 

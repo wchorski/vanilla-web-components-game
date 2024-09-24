@@ -1,3 +1,10 @@
+@import url("https://fonts.googleapis.com/css2?family=Tiny5&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=DotGothic16&display=swap");
+/* @font-face {
+	font-family: "8Bit";
+	src: url("https://fonts.gstatic.com/s/pressstart2p/v8/e3t4euH2GZy4JxvNPjwjQp4CQEIbB8Z5TGmYxucoWg.ttf");
+} */
+
 :root {
 	--nudge-x: -6px;
 	--nudge-y: -12px;
@@ -7,8 +14,28 @@
 	--move-speed: 20s;
 }
 
+body {
+	/* font-family: "Tiny5", sans-serif; */
+	font-family: "DotGothic16", sans-serif;
+	font-weight: 400;
+	font-style: normal;
+
+	background: #a18900;
+	padding: 0;
+	margin: 0;
+
+	cursor: url("./sprites/glove-point.png"), auto;
+	font-size: 10px;
+}
+
 .meters_wrap {
 	padding-inline: 10px;
+	display: grid;
+	gap: 3px;
+}
+
+.invisiable {
+	opacity: 0;
 }
 
 button {
@@ -28,15 +55,6 @@ button:active {
 	border: solid 2px #d4b758;
 	background-color: #383535;
 	transform: translateY(2px);
-}
-
-body {
-	background: #a18900;
-	padding: 0;
-	margin: 0;
-
-	cursor: url("./sprites/glove-point.png"), auto;
-	font-size: 10px;
 }
 
 .disable-drag {
@@ -79,11 +97,14 @@ img {
 	z-index: 1;
 }
 
+.ui_wrap {
+	padding-inline: 1rem;
+}
+
 .number-counter {
 	display: flex;
 	align-items: center;
 	gap: 1rem;
-	margin-inline: 2rem;
 }
 
 .ring-icon {

@@ -17,6 +17,8 @@ browser based pet simulator game built with
 
 ## TODO
 
+- [ ] if hunger is below `0.2` trigger cry instead of sleep
+- [ ] touch / mobile input!!!!!!!! with `touch` instead of `drag` w/e
 - [ ] figure local storage or sqlite to save ring count
 - [ ] custom cursor w glove
 - [ ] make weeds apear randomly
@@ -34,3 +36,4 @@ browser based pet simulator game built with
     - sleep (naptime) happens at regular intervals and duration is usually the same (slight variable?)
 - [ ] don't forget to export `<number-counter>` before too much customization
 - [ ] drag and drop fruit to feed (and other items)
+- [ ] look into [JsDocs](https://depth-first.com/articles/2021/10/20/types-without-typescript/)

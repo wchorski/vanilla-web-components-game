@@ -8,6 +8,16 @@ class DropZone extends HTMLElement {
 		// props have 3 places `constructor()`, `this.getAttribute("prop")`, and `observedAttributes()`
 		this.prop = "custom_prop"
 		this.class = "drop-zone"
+		this.onDrop = this.onDrop.bind(this)
+		this.onTouchMove = this.onTouchMove.bind(this)
+		this.onTouchEnd = this.onTouchEnd.bind(this)
+
+		// this.onMouseEnter = this.onMouseEnter.bind(this)
+		// this.onPointerUp = this.onPointerUp.bind(this)
+		// this.onPointerEnter = this.onPointerEnter.bind(this)
+		// this.onPointerLeave = this.onPointerLeave.bind(this)
+
+		this.touchActive = false
 	}
 	connectedCallback() {
 		this.innerHTML = String.raw`
@@ -37,75 +47,97 @@ class DropZone extends HTMLElement {
       </style>
     `
 
+		// Prevent the default behavior so drop event can occur (for desktop)
+		this.addEventListener("dragover", this.onDragOver)
+		this.addEventListener("drop", this.onDrop)
+		this.addEventListener("dragenter", this.onDragEnter)
+		this.addEventListener("dragleave", this.onDragLeave)
+
+		// this.addEventListener("mouseenter", this.onMouseEnter)
+		// this.addEventListener("pointerup", this.onPointerUp)
+		// this.addEventListener("pointerenter", this.onPointerEnter)
+		// this.addEventListener("pointerleave", this.onPointerLeave)
+
+		// Touch support
+		this.addEventListener("touchmove", this.onTouchMove)
+		this.addEventListener("touchend", this.onTouchEnd)
+
 		this.classList.add(this.getAttribute("class"))
 		this.classList.add("drop-zone")
 		this.prop = this.getAttribute("prop") || this.prop
 
 		//? functions
-		this.onDrop()
+		// this.onDrop()
 	}
 
 	static get observedAttributes() {
 		return ["class"]
 	}
 
-	onDrop() {
-		//when drag item is hovering over
-		this.addEventListener("dragover", (e) => {
-			e.preventDefault()
+	// onPointerUp(e) {
+	// 	console.log("onPointerUp")
+	// }
+	// onPointerEnter(e) {
+	// 	console.log("onPointerEnter")
+	// 	this.classList.add("over")
+	// }
+	// onPointerLeave(e) {
+	// 	console.log("onPointerLeave")
+	// 	this.classList.remove("over")
+	// }
+	// onMouseEnter(e) {
+	// 	// console.log("onMouseEnter")
+	// }
 
-			e.dataTransfer.dropEffect = "copy"
-			return false
-		})
+	// --- Touch Support for Mobile ---
+	onTouchMove(e) {
+		e.preventDefault() // Prevent scrolling
+		this.touchActive = true
+		this.classList.add("over") // Indicate dragging over zone
+	}
 
-		this.addEventListener("dragenter", (e) => {
-			this.classList.add("over")
-		})
+	onTouchEnd(e) {
+		console.log("drop-zone: touchend")
 
-		this.addEventListener("dragleave", (e) => {
-			this.classList.remove("over")
-		})
+		const touch = e.changedTouches[0] // Get the first touch point
 
-		this.addEventListener("drop", (e) => {
-			e.preventDefault()
-			e.stopPropagation()
-			// //? target is the <drop-zone> itself
-			// console.log("e.target: ", e.target)
-			// console.log("e.dataTransfer: ", e.dataTransfer)
+		const targetElement = document.elementFromPoint(
+			touch.clientX,
+			touch.clientY
+		)
 
-			// const draggableElementId = e.dataTransfer.getData("text/html")
-			// const draggableElement = document.getElementById(draggableElementId)
-			// if (draggableElement) e.target.appendChild(draggableElement)
-			// console.log("draggableElementId: ", draggableElementId)
-			// console.log("draggableElement: ", draggableElement)
+		console.log(targetElement)
+		// if (this.touchActive) {
+		// 	this.touchActive = false
+		// 	this.classList.remove("over")
+		// 	alert("Element dropped successfully (touch)!")
+		// }
+	}
 
-			// // Access properties of the dropped element
-			// const itemType = e.target.getAttribute("type")
-			// console.log("dropped in dropzone: ", itemType)
+	// --- Drag and Drop (Desktop) ---
+	onDragOver(e) {
+		e.preventDefault() // Necessary to allow the drop
+	}
 
-			// return false
-			// if (window.g_DraggedElement) {
-			// 	e.target.appendChild(window.g_DraggedElement)
-			// }
+	onDrop(e) {
+		e.preventDefault()
+		e.stopPropagation()
+		this.classList.remove("over")
+		// console.log(e.target)
 
-			// const itemType = e.target.getAttribute("type")
-			const itemType = window.g_DraggedElement.getAttribute("type")
-			const hungerValue = parseFloat(
-				window.g_DraggedElement.getAttribute("hungerValue")
-			)
-			this.classList.remove("over")
+		// // Handle the drop event
+		// const droppedElementData = e.dataTransfer.getData("text")
+		// if (droppedElementData === "fruit-item") {
+		// 	alert("Element dropped successfully!")
+		// }
+	}
 
-			//todo add chao feed from fruit + hungerPoints
-			// setHunger(hungerValue)
+	onDragEnter() {
+		this.classList.add("over")
+	}
 
-			const thisCharacter = this.parentNode.parentNode
-			thisCharacter.eatRoutine(hungerValue)
-
-			window.g_DraggedElement.remove()
-			window.g_DraggedElement = null
-
-			return false
-		})
+	onDragLeave() {
+		this.classList.remove("over")
 	}
 }
 customElements.define("drop-zone", DropZone)

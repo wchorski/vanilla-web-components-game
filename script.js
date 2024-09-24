@@ -5,21 +5,48 @@ window.playfield = document.getElementById("playfield")
 const characterActor = document.querySelector("#character")
 
 const pointsDisplay = document.getElementById("pointsDisplay")
+/**
+ * @param {number} points
+ */
 let points = localStorage.getItem("points")
 	? parseInt(localStorage.getItem("points"))
 	: 0
 const hungerMeter = document.getElementById("hungerMeter")
-let hungerPoints = localStorage.getItem("hungerPoints")
+/**
+ * @param {float} hungerPoints
+ */
+export let hungerPoints = localStorage.getItem("hungerPoints")
 	? parseFloat(localStorage.getItem("hungerPoints"))
-	: 1
+	: 1.0
 const sleepMeter = document.getElementById("sleepMeter")
+/**
+ * @param {float} sleepPoints
+ */
 let sleepPoints = localStorage.getItem("sleepPoints")
 	? parseFloat(localStorage.getItem("sleepPoints"))
-	: 1
+	: 1.0
 const energyMeter = document.getElementById("energyMeter")
+/**
+ * @param {float} energyPoints
+ */
 let energyPoints = localStorage.getItem("energyPoints")
 	? parseFloat(localStorage.getItem("energyPoints"))
-	: 1
+	: 1.0
+
+//? may use a global pointer handler if game gets more complicated
+// document.addEventListener("pointerup", (event) => {
+// 	const { clientX, clientY } = event
+
+// 	// Get all elements at the point of the pointerup event
+// 	const elements = document.elementsFromPoint(clientX, clientY)
+// 	console.log({ elements })
+
+// 	// // The current element is the first one, the one behind it is next
+// 	// if (elements.length > 1) {
+// 	// 	const behindElement = elements[1]
+// 	// 	console.log("Element behind the current one:", behindElement)
+// 	// }
+// })
 
 // function moveCharacter() {
 // 	// const playfield = document.getElementById("playfield")
@@ -106,7 +133,7 @@ function animPoints() {
 export function setEnergy(inputPoints) {
 	energyPoints += inputPoints
 	energyPoints = clamp(energyPoints, 0, 1)
-	if (!energyPoints) energyPoints = 1.0
+	if (!energyPoints) energyPoints = 0.0
 
 	energyMeter.querySelector(".meter").setAttribute("value", energyPoints)
 	localStorage.setItem("energyPoints", energyPoints)
@@ -115,7 +142,7 @@ export function setEnergy(inputPoints) {
 export function setSleep(inputPoints) {
 	sleepPoints += inputPoints
 	sleepPoints = clamp(sleepPoints, 0, 1)
-	if (!sleepPoints) sleepPoints = 1.0
+	if (!sleepPoints) sleepPoints = 0.0
 
 	sleepMeter.querySelector(".meter").setAttribute("value", sleepPoints)
 	localStorage.setItem("sleepPoints", sleepPoints)
