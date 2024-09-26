@@ -47,7 +47,7 @@ class HealthMeter extends HTMLElement {
           -moz-appearance: none;
           background: var(--background);
           display: block;
-          height: 10px;
+          height: 5px;
           width: 100px;
           border: none;
           border-radius: 30px;
@@ -85,6 +85,10 @@ class HealthMeter extends HTMLElement {
           transition-property: color, background, width;
           transition-duration: 0.2s;
           transition-timing-function: ease-in;
+        }
+
+        health-meter label {
+          font-size: 7px;
         }
         
       </style>

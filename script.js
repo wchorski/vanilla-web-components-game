@@ -4,34 +4,41 @@ window.g_DraggedElement = null
 window.playfield = document.getElementById("playfield")
 const characterActor = document.querySelector("#character")
 
-const pointsDisplay = document.getElementById("pointsDisplay")
 /**
  * @param {number} points
  */
 let points = localStorage.getItem("points")
 	? parseInt(localStorage.getItem("points"))
 	: 0
-const hungerMeter = document.getElementById("hungerMeter")
+const pointsDisplay = document.getElementById("pointsDisplay")
 /**
  * @param {float} hungerPoints
  */
 export let hungerPoints = localStorage.getItem("hungerPoints")
 	? parseFloat(localStorage.getItem("hungerPoints"))
 	: 1.0
-const sleepMeter = document.getElementById("sleepMeter")
+const hungerMeter = document.getElementById("hungerMeter")
 /**
  * @param {float} sleepPoints
  */
-let sleepPoints = localStorage.getItem("sleepPoints")
+export let sleepPoints = localStorage.getItem("sleepPoints")
 	? parseFloat(localStorage.getItem("sleepPoints"))
+	: 1.0
+const sleepMeter = document.getElementById("sleepMeter")
+/**
+ * @param {float} energyPoints
+ */
+export let energyPoints = localStorage.getItem("energyPoints")
+	? parseFloat(localStorage.getItem("energyPoints"))
 	: 1.0
 const energyMeter = document.getElementById("energyMeter")
 /**
  * @param {float} energyPoints
  */
-let energyPoints = localStorage.getItem("energyPoints")
-	? parseFloat(localStorage.getItem("energyPoints"))
+export let happynessPoints = localStorage.getItem("happynessPoints")
+	? parseFloat(localStorage.getItem("happynessPoints"))
 	: 1.0
+const happynessMeter = document.getElementById("happynessMeter")
 
 //? may use a global pointer handler if game gets more complicated
 // document.addEventListener("pointerup", (event) => {
@@ -147,6 +154,15 @@ export function setSleep(inputPoints) {
 	sleepMeter.querySelector(".meter").setAttribute("value", sleepPoints)
 	localStorage.setItem("sleepPoints", sleepPoints)
 }
+
+export function setHappyness(inputPoints) {
+	happynessPoints += inputPoints
+	happynessPoints = clamp(happynessPoints, 0, 1)
+	if (!happynessPoints) happynessPoints = 0.0
+
+	happynessMeter.querySelector(".meter").setAttribute("value", happynessPoints)
+	localStorage.setItem("happynessPoints", happynessPoints)
+}
 // setInterval(() => {
 // 	//todo stop this if currently sleeping
 // 	//todo not able to feed if sleeping
@@ -197,6 +213,7 @@ export function buyItemWithPoints(inputPoints) {
 function initGame() {
 	pointsDisplay.textContent = points
 	hungerMeter.querySelector(".meter").setAttribute("value", hungerPoints)
+	happynessMeter.querySelector(".meter").setAttribute("value", happynessPoints)
 	sleepMeter.querySelector(".meter").setAttribute("value", sleepPoints)
 	energyMeter.querySelector(".meter").setAttribute("value", energyPoints)
 }
@@ -216,9 +233,10 @@ document.addEventListener("DOMContentLoaded", () => {
 	// dragAndDrop()
 
 	triggerRandomRoutine([
-		() => characterActor.transformRoutine(),
+		// () => characterActor.transformRoutine(),
+		// () => characterActor.exciteRoutine(),
 		// () => characterActor.sleepRoutine(),
-		// () => characterActor.sitRoutine(),
+		() => characterActor.sitRoutine(),
 	])
 })
 

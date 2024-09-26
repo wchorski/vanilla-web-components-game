@@ -10,8 +10,6 @@ import {
 	happynessPoints,
 } from "../script.js"
 
-import { durationInSteps } from "../lib/durationInSteps.js"
-
 const animStates = [
 	"face_still",
 	"face_down",
@@ -103,8 +101,8 @@ class CharacterSprite extends HTMLElement {
 		const dropZone = document.createElement("drop-zone")
 		sprite_wrap.appendChild(dropZone)
 
-		// this.state = this.getAttribute("state") || this.state
-		// this.setAnimation()
+		this.state = this.getAttribute("state") || this.state
+		this.setAnimation()
 		// this.updateTranslate()
 	}
 
@@ -127,17 +125,17 @@ class CharacterSprite extends HTMLElement {
 		//as i set this.state handle all the visual stuff down here
 		// console.log(`character-sprite: `, name, oldValue, newValue)
 		if (name === "state" && oldValue !== newValue) {
-			// console.log("attributeChangedCallback: ", newValue)
+			console.log("attributeChangedCallback: ", newValue)
 			this.setAnimation()
 		}
 
-		// if (this.sprite) {
-		// 	if (name === "src" && oldValue !== newValue) {
-		// 		this.sprite.src = newValue
-		// 	} else if (name === "state") {
-		// 		this.setAnimation()
-		// 	}
-		// }
+		if (this.sprite) {
+			if (name === "src" && oldValue !== newValue) {
+				this.sprite.src = newValue
+			} else if (name === "state") {
+				this.setAnimation()
+			}
+		}
 	}
 
 	abortOngoingRoutine() {
@@ -219,13 +217,33 @@ class CharacterSprite extends HTMLElement {
 				this.state = "face_still"
 				break
 		}
+		this.setAnimation()
 
 		this.x = destinationPos.x
 		this.y = destinationPos.y
 
+		const duration = this.speed
+		const iterations = 3
+		const timeDelay = duration / iterations
+
+		const iterateWithPause = async (onFinish) => {
+			for (let i = 0; i < iterations; i++) {
+				if (signal.aborted) return
+
+				await new Promise((resolve) => setTimeout(resolve, timeDelay))
+				//? splits the total reduction across num of iterations
+				setSleep(-0.1 / iterations)
+				setHunger(-0.05 / iterations)
+				setEnergy(-0.15 / iterations)
+			}
+
+			if (signal.aborted) return
+			onFinish()
+		}
+
 		const finish = () => {
 			this.state = "face_still"
-			// this.setAnimation()
+			this.setAnimation()
 			triggerRandomRoutine([
 				// () => this.transformRoutine(),
 				hungerPoints > 0.2
@@ -235,19 +253,17 @@ class CharacterSprite extends HTMLElement {
 			])
 		}
 
-		const steps = 3
+		iterateWithPause(finish)
 
-		durationInSteps({
-			duration: this.speed,
-			steps,
-			onFinish: finish,
-			signal: signal,
-			funcs: [
-				() => setSleep(-0.1 / steps),
-				() => setHunger(-0.05 / steps),
-				() => setEnergy(-0.15 / steps),
-			],
-		})
+		// // //? reset to stop when done anim
+		// setTimeout(() => {
+		// 	this.state = "face_still"
+		// 	this.setAnimation()
+		// 	triggerRandomRoutine([
+		// 		// () => this.transformRoutine(),
+		// 		() => this.sleepRoutine(),
+		// 	])
+		// }, this.speed)
 	}
 
 	exciteRoutine() {
@@ -256,8 +272,23 @@ class CharacterSprite extends HTMLElement {
 		const signal = this.controller.signal
 
 		this.state = "excite"
+		this.setAnimation()
+		const duration = 5000
+		const iterations = 3
+		const timeDelay = duration / iterations
 
 		this.classList.add("char_translate_paused")
+
+		const iterateWithPause = async (onFinish) => {
+			for (let i = 0; i < iterations; i++) {
+				if (signal.aborted) return
+
+				await new Promise((resolve) => setTimeout(resolve, timeDelay))
+				setHappyness(0.1 / iterations)
+			}
+			if (signal.aborted) return
+			onFinish()
+		}
 
 		const finish = () => {
 			triggerRandomRoutine([
@@ -269,15 +300,7 @@ class CharacterSprite extends HTMLElement {
 			])
 		}
 
-		const steps = 3
-
-		durationInSteps({
-			duration: 5000,
-			steps,
-			onFinish: finish,
-			signal: signal,
-			funcs: [() => setHappyness(0.1 / steps)],
-		})
+		iterateWithPause(finish)
 	}
 
 	sitRoutine() {
@@ -286,7 +309,25 @@ class CharacterSprite extends HTMLElement {
 		const signal = this.controller.signal
 
 		this.state = "sit_down"
+		this.setAnimation()
+		const duration = 5000
+		const iterations = 8
+		const timeDelay = duration / iterations
+
 		this.classList.add("char_translate_paused")
+
+		const iterateWithPause = async (onFinish) => {
+			for (let i = 0; i < iterations; i++) {
+				if (signal.aborted) return
+
+				await new Promise((resolve) => setTimeout(resolve, timeDelay))
+				setSleep(-0.02 / iterations)
+				setHunger(-0.01 / iterations)
+				setEnergy(-0.02 / iterations)
+			}
+			if (signal.aborted) return
+			onFinish()
+		}
 
 		const finish = () => {
 			//todo isHappy() that checks hunger, sleep, etc to see if exciteRoutine will be triggered
@@ -301,19 +342,7 @@ class CharacterSprite extends HTMLElement {
 			])
 		}
 
-		const steps = 8
-
-		durationInSteps({
-			duration: 5000,
-			steps,
-			onFinish: finish,
-			signal: signal,
-			funcs: [
-				() => setSleep(-0.02 / steps),
-				() => setHunger(-0.01 / steps),
-				() => setEnergy(-0.02 / steps),
-			],
-		})
+		iterateWithPause(finish)
 	}
 
 	eatRoutine(hungerValue) {
@@ -334,7 +363,7 @@ class CharacterSprite extends HTMLElement {
 		//todo if tummy full then refuse eat
 		if (hungerPoints > 0.9) {
 			this.state = "no"
-			// this.setAnimation()
+			this.setAnimation()
 
 			setTimeout(() => {
 				triggerRandomRoutine([
@@ -347,6 +376,24 @@ class CharacterSprite extends HTMLElement {
 			}, 3000)
 		} else {
 			this.state = "eat"
+			this.setAnimation()
+			// todo make these input var for func
+			const duration = 8000
+			const iterations = 13
+			const timeDelay = duration / iterations
+
+			const iterateWithPause = async (onFinish) => {
+				for (let i = 0; i < iterations; i++) {
+					if (signal.aborted) return
+
+					await new Promise((resolve) => setTimeout(resolve, timeDelay))
+					setEnergy(0.15 / iterations)
+					setHunger(hungerValue / iterations)
+				}
+
+				if (signal.aborted) return
+				onFinish()
+			}
 
 			const finish = () => {
 				triggerRandomRoutine([
@@ -358,18 +405,7 @@ class CharacterSprite extends HTMLElement {
 				])
 			}
 
-			const steps = 13
-
-			durationInSteps({
-				duration: 8000,
-				steps,
-				onFinish: finish,
-				signal: signal,
-				funcs: [
-					() => setEnergy(0.15 / steps),
-					() => setHunger(hungerValue / steps),
-				],
-			})
+			iterateWithPause(finish)
 		}
 	}
 
@@ -380,6 +416,25 @@ class CharacterSprite extends HTMLElement {
 
 		this.classList.add("char_translate_paused")
 		this.state = "sleep"
+		this.setAnimation()
+		// todo make these input var for func
+		const duration = 500
+		const iterations = 10
+		const timeDelay = duration / iterations
+
+		const iterateWithPause = async (onFinish) => {
+			for (let i = 0; i < iterations; i++) {
+				if (signal.aborted) return
+
+				await new Promise((resolve) => setTimeout(resolve, timeDelay))
+				setSleep(0.35 / iterations)
+				setEnergy(0.25 / iterations)
+				setHunger(-0.01 / iterations)
+			}
+
+			if (signal.aborted) return
+			onFinish()
+		}
 
 		const finish = () => {
 			triggerRandomRoutine([
@@ -389,19 +444,7 @@ class CharacterSprite extends HTMLElement {
 			])
 		}
 
-		const steps = 10
-
-		durationInSteps({
-			duration: 5000,
-			steps,
-			onFinish: finish,
-			signal: signal,
-			funcs: [
-				() => setSleep(0.35 / steps),
-				() => setEnergy(0.25 / steps),
-				() => setHunger(-0.01 / steps),
-			],
-		})
+		iterateWithPause(finish)
 	}
 
 	cryRoutine() {
@@ -411,6 +454,23 @@ class CharacterSprite extends HTMLElement {
 
 		this.classList.add("char_translate_paused")
 		this.state = "cry"
+		this.setAnimation()
+		const duration = 5000
+		const iterations = 8
+		const timeDelay = duration / iterations
+
+		const iterateWithPause = async (onFinish) => {
+			for (let i = 0; i < iterations; i++) {
+				if (signal.aborted) return
+
+				await new Promise((resolve) => setTimeout(resolve, timeDelay))
+
+				setHappyness(-0.02 / iterations)
+			}
+
+			if (signal.aborted) return
+			onFinish()
+		}
 
 		const finish = () => {
 			triggerRandomRoutine([
@@ -420,15 +480,7 @@ class CharacterSprite extends HTMLElement {
 			])
 		}
 
-		const steps = 8
-
-		durationInSteps({
-			duration: 5000,
-			steps,
-			onFinish: finish,
-			signal: signal,
-			funcs: [() => setHappyness(-0.02 / steps)],
-		})
+		iterateWithPause(finish)
 	}
 
 	setAnimation() {

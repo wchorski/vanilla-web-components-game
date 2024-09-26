@@ -31,7 +31,7 @@ body {
 .meters_wrap {
 	padding-inline: 10px;
 	display: grid;
-	gap: 3px;
+	gap: 1px;
 }
 
 .invisiable {
@@ -173,7 +173,7 @@ img {
 	margin: 0;
 	list-style: none;
 	display: grid;
-	gap: 1rem;
+	gap: 5px;
 }
 
 #shop > ul > li {
