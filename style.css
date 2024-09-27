@@ -32,6 +32,18 @@ body {
 	padding-inline: 10px;
 	display: grid;
 	gap: 1px;
+
+	h2 {
+		margin: 0;
+		font-size: 8px;
+		font-weight: bold;
+	}
+}
+
+.charDash {
+	border: solid grey 1px;
+	padding: 4px;
+	background-color: white;
 }
 
 .invisiable {

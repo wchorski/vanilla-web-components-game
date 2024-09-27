@@ -1,15 +1,8 @@
-import {
-	setEnergy,
-	setHunger,
-	setSleep,
-	setHappyness,
-	triggerRandomRoutine,
-	hungerPoints,
-	sleepPoints,
-	energyPoints,
-	happynessPoints,
-} from "../script.js"
-
+/**
+ * @typedef {import('../types/Character.js').State} CharState
+ */
+import { triggerRandomRoutine } from "../script.js"
+import { clamp } from "../lib/clamp.js"
 import { durationInSteps } from "../lib/durationInSteps.js"
 
 const animStates = [
@@ -43,12 +36,8 @@ class CharacterSprite extends HTMLElement {
 	constructor() {
 		super()
 		this.sprite = null
-		/**
-		 * @property {"face_still"|"face_down"|"face_right"|"face_left"|"face_up"|"angry"|"no"|"crouch"|"crawl"|"cry"|"sway"|"eat"|"eat_favorite"|"excite"|"sleep"|"excite_2"|"nasty"|"point"|"yawn"|"sit_down"|"think"|"sit_left"} _state
-		 */
-		// this.state = "sit_down"
 		this.controller = null
-		this.sleepPoints = 1.0
+		this.sleep = 1.0
 		//todo either
 		//1. distance travel ups or lowers speed
 		//2. speed up or low depending on distance
@@ -56,28 +45,12 @@ class CharacterSprite extends HTMLElement {
 		this.x = 0
 		this.y = 0
 		this.translateAnim = null
-	}
-
-	get hungerPoints() {
-		return this.getAttribute("hungerPoints")
-	}
-
-	get state() {
-		return this.getAttribute("state")
-	}
-
-	set state(value) {
-		if (this.state !== value) {
-			this.setAttribute("state", value)
-			// this.setAnimation()
-		}
-
-		// this.state = newState
-		// this.setAnimation()
-		// this.setAttribute("state", newState)
+		this.healthUi = document.querySelector(`#${this.id}-health-ui`)
 	}
 
 	connectedCallback() {
+		this.healthUi = document.querySelector(`#${this.id}-health-ui`)
+
 		const sprite_wrap = document.createElement("div")
 		sprite_wrap.classList.add("sprite_wrap")
 
@@ -107,6 +80,8 @@ class CharacterSprite extends HTMLElement {
 		const dropZone = document.createElement("drop-zone")
 		sprite_wrap.appendChild(dropZone)
 
+		this.transformRoutine()
+
 		// this.state = this.getAttribute("state") || this.state
 		// this.setAnimation()
 		// this.updateTranslate()
@@ -119,6 +94,78 @@ class CharacterSprite extends HTMLElement {
 
 	static get observedAttributes() {
 		return ["src", "alt", "state", "x", "y", "x_dest", "y_dest"]
+	}
+	get id() {
+		return this.getAttribute("id")
+	}
+	/** @param {string} value */
+	set id(value) {
+		this.setAttribute("id", value)
+	}
+
+	get hunger() {
+		return this.getAttribute("hunger")
+	}
+	/** @param {number} value */
+	set hunger(value) {
+		const currentPoints = Number(this.getAttribute("hunger")) || 0.0
+		const clampedPoints = clamp(currentPoints + value, 0, 1)
+		this.setAttribute("hunger", clampedPoints)
+
+		this.healthUi
+			.querySelector("health-meter.hungerMeter")
+			.setAttribute("value", clampedPoints)
+	}
+
+	get sleep() {
+		return this.getAttribute("sleep")
+	}
+	/** @param {number} value */
+	set sleep(value) {
+		const currentPoints = Number(this.getAttribute("sleep"))
+		const clampedPoints = clamp(currentPoints + value, 0, 1)
+		this.setAttribute("sleep", clampedPoints)
+		//todo don't query this.healthUi every time. figure out how to only one time
+		this.healthUi = document.querySelector(`#${this.id}-health-ui`)
+		this.healthUi
+			.querySelector("health-meter.sleepMeter")
+			.setAttribute("value", clampedPoints)
+	}
+
+	get energy() {
+		return this.getAttribute("energy")
+	}
+	/** @param {number} value */
+	set energy(value) {
+		const currentPoints = Number(this.getAttribute("energy"))
+		const clampedPoints = clamp(currentPoints + value, 0, 1)
+		this.setAttribute("energy", clampedPoints)
+		this.healthUi
+			.querySelector("health-meter.energyMeter")
+			.setAttribute("value", clampedPoints)
+	}
+
+	get happyness() {
+		return this.getAttribute("happyness")
+	}
+	/** @param {number} value */
+	set happyness(value) {
+		const currentPoints = Number(this.getAttribute("happyness"))
+		const clampedPoints = clamp(currentPoints + value, 0, 1)
+		this.setAttribute("happyness", clampedPoints)
+		this.healthUi
+			.querySelector("health-meter.happynessMeter")
+			.setAttribute("value", clampedPoints)
+	}
+
+	get state() {
+		return this.getAttribute("state")
+	}
+	/** @param {CharState} value */
+	set state(value) {
+		if (this.state !== value) {
+			this.setAttribute("state", value)
+		}
 	}
 	/**
 	 *
@@ -232,9 +279,7 @@ class CharacterSprite extends HTMLElement {
 			// this.setAnimation()
 			triggerRandomRoutine([
 				// () => this.transformRoutine(),
-				hungerPoints > 0.2
-					? () => this.sleepRoutine()
-					: () => this.cryRoutine(),
+				this.hunger > 0.2 ? () => this.sleepRoutine() : () => this.cryRoutine(),
 				() => this.sitRoutine(),
 			])
 		}
@@ -247,9 +292,9 @@ class CharacterSprite extends HTMLElement {
 			onFinish: finish,
 			signal: signal,
 			funcs: [
-				() => setSleep(-0.1 / steps),
-				() => setHunger(-0.05 / steps),
-				() => setEnergy(-0.15 / steps),
+				() => (this.sleep = -0.1 / steps),
+				() => (this.hunger = -0.05 / steps),
+				() => (this.energy = -0.15 / steps),
 			],
 		})
 	}
@@ -266,9 +311,7 @@ class CharacterSprite extends HTMLElement {
 		const finish = () => {
 			triggerRandomRoutine([
 				() => this.transformRoutine(),
-				hungerPoints > 0.2
-					? () => this.sleepRoutine()
-					: () => this.cryRoutine(),
+				this.hunger > 0.2 ? () => this.sleepRoutine() : () => this.cryRoutine(),
 				() => this.sitRoutine(),
 			])
 		}
@@ -280,7 +323,7 @@ class CharacterSprite extends HTMLElement {
 			steps,
 			onFinish: finish,
 			signal: signal,
-			funcs: [() => setHappyness(0.1 / steps)],
+			funcs: [() => (this.happyness = 0.1 / steps)],
 		})
 	}
 
@@ -296,10 +339,8 @@ class CharacterSprite extends HTMLElement {
 			//todo isHappy() that checks hunger, sleep, etc to see if exciteRoutine will be triggered
 			triggerRandomRoutine([
 				() => this.transformRoutine(),
-				hungerPoints > 0.2
-					? () => this.sleepRoutine()
-					: () => this.cryRoutine(),
-				...(sleepPoints > 0.4 && hungerPoints > 0.4
+				this.hunger > 0.2 ? () => this.sleepRoutine() : () => this.cryRoutine(),
+				...(this.sleep > 0.4 && this.hunger > 0.4
 					? [() => this.exciteRoutine()]
 					: []),
 			])
@@ -313,9 +354,9 @@ class CharacterSprite extends HTMLElement {
 			onFinish: finish,
 			signal: signal,
 			funcs: [
-				() => setSleep(-0.02 / steps),
-				() => setHunger(-0.01 / steps),
-				() => setEnergy(-0.02 / steps),
+				() => (this.sleep = -0.02 / steps),
+				() => (this.hunger = -0.01 / steps),
+				() => (this.energy = -0.02 / steps),
 			],
 		})
 	}
@@ -336,7 +377,9 @@ class CharacterSprite extends HTMLElement {
 		this.classList.add("char_translate_paused")
 
 		//todo if tummy full then refuse eat
-		if (hungerPoints > 0.9) {
+		console.log(this.hunger)
+
+		if (this.hunger > 0.9) {
 			this.state = "no"
 			// this.setAnimation()
 
@@ -344,7 +387,7 @@ class CharacterSprite extends HTMLElement {
 				triggerRandomRoutine([
 					() => this.transformRoutine(),
 					() => this.sitRoutine(),
-					hungerPoints > 0.2
+					this.hunger > 0.2
 						? () => this.sleepRoutine()
 						: () => this.cryRoutine(),
 				])
@@ -356,7 +399,7 @@ class CharacterSprite extends HTMLElement {
 				triggerRandomRoutine([
 					() => this.transformRoutine(),
 					() => this.sitRoutine(),
-					hungerPoints > 0.2
+					this.hunger > 0.2
 						? () => this.sleepRoutine()
 						: () => this.cryRoutine(),
 				])
@@ -370,8 +413,8 @@ class CharacterSprite extends HTMLElement {
 				onFinish: finish,
 				signal: signal,
 				funcs: [
-					() => setEnergy(0.15 / steps),
-					() => setHunger(hungerValue / steps),
+					() => (this.energy = 0.2 / steps),
+					() => (this.hunger = hungerValue / steps),
 				],
 			})
 		}
@@ -401,9 +444,9 @@ class CharacterSprite extends HTMLElement {
 			onFinish: finish,
 			signal: signal,
 			funcs: [
-				() => setSleep(0.35 / steps),
-				() => setEnergy(0.25 / steps),
-				() => setHunger(-0.01 / steps),
+				() => (this.sleep = 0.35 / steps),
+				() => (this.energy = 0.3 / steps),
+				() => (this.hunger = -0.01 / steps),
 			],
 		})
 	}
@@ -418,7 +461,7 @@ class CharacterSprite extends HTMLElement {
 
 		const finish = () => {
 			triggerRandomRoutine([
-				...(energyPoints > 0.3 ? [() => this.transformRoutine()] : []),
+				...(this.energy > 0.3 ? [() => this.transformRoutine()] : []),
 				() => this.sitRoutine(),
 				// () => this.sleepRoutine(),
 			])
@@ -431,7 +474,7 @@ class CharacterSprite extends HTMLElement {
 			steps,
 			onFinish: finish,
 			signal: signal,
-			funcs: [() => setHappyness(-0.02 / steps)],
+			funcs: [() => (this.happyness = -0.02 / steps)],
 		})
 	}
 

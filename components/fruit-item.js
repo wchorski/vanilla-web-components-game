@@ -1,14 +1,12 @@
 // drag example - https://jsfiddle.net/LULbV/
 // drag cred - https://stackoverflow.com/questions/11169554/how-to-style-dragged-element
 
-import { hungerPoints } from "../script.js"
-
 class FruitItem extends HTMLElement {
 	constructor() {
 		super()
 		this.type = "round"
-		const maxX = window.playfield.clientWidth - character.offsetWidth
-		const maxY = window.playfield.clientHeight - character.offsetHeight
+		const maxX = window.playfield.clientWidth - this.offsetWidth
+		const maxY = window.playfield.clientHeight - this.offsetHeight
 		const randomX = Math.random() * maxX
 		const randomY = Math.random() * maxY
 		this.x = randomX
@@ -208,7 +206,7 @@ class FruitItem extends HTMLElement {
 		const thisCharacter = target.parentNode.parentNode
 		thisCharacter.eatRoutine(this.hungerValue)
 
-		if (hungerPoints < 0.9) {
+		if (thisCharacter.hunger < 0.9) {
 			this.remove()
 		}
 

@@ -1,6 +1,5 @@
 // drag example - https://jsfiddle.net/LULbV/
 // drag cred - https://stackoverflow.com/questions/11169554/how-to-style-dragged-element
-import { setHunger } from "../script.js"
 
 class DropZone extends HTMLElement {
 	constructor() {

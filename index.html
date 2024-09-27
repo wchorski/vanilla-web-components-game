@@ -23,11 +23,29 @@
 				alt="playfield background garden"
 			/>
 			<character-sprite
-				id="character"
+				id="char-1"
 				class="character char_translate"
 				alt="Character"
 				src="./sprites/chao-neutral-v5.png"
 				state="eat"
+				hunger="0.5"
+				sleep="0.5"
+				energy="0.5"
+				happyness="0.5"
+			></character-sprite>
+
+			<character-sprite
+				id="char-2"
+				class="character char_translate"
+				alt="Character"
+				src="./sprites/chao-neutral-v5.png"
+				state="eat"
+				hunger="0.5"
+				sleep="0.5"
+				energy="0.5"
+				happyness="0.5"
+				x="100"
+				y="100"
 			></character-sprite>
 
 			<!-- <fruit-item type="round" x="0" y="0" hungerValue="0.2"></fruit-item> -->
@@ -82,45 +100,47 @@
 				</div>
 			</button> -->
 
-			<div class="meters_wrap">
-				<health-meter
+			<div class="meters_wrap" id="dashboard">
+				<!-- <health-meter
+					class="hungerMeter"
 					value="1.0"
 					min="0"
 					max="1.0"
 					label="hunger"
-					id="hungerMeter"
 					hue="17"
 				></health-meter>
 
 				<health-meter
+					class="sleepMeter"
 					value="0.4"
 					min="0"
 					max="1.0"
 					label="sleep"
-					id="sleepMeter"
 					hue="172"
 				></health-meter>
 
 				<health-meter
+					class="energyMeter"
 					value="0.6"
 					min="0"
 					max="1.0"
 					label="energy"
-					id="energyMeter"
 					hue="272"
 				></health-meter>
 
 				<health-meter
+					class="happynessMeter"
 					value="0.5"
 					min="0"
 					max="1.0"
 					label="happyness"
-					id="happynessMeter"
 					hue="72"
-				></health-meter>
+				></health-meter> -->
 			</div>
 		</div>
 
+		<button id="savedata">Save</button>
+		<hr />
 		<!-- TEST STUFF -->
 		<form id="loginForm">
 			<input id="username" placeholder="name" />

@@ -4,6 +4,7 @@ class HealthMeter extends HTMLElement {
 		this.value = 0.5
 		this.label = "myMeter"
 		this.hue = "17"
+		this.meter = this.querySelector("progress")
 	}
 
 	connectedCallback() {
@@ -96,7 +97,9 @@ class HealthMeter extends HTMLElement {
       <progress value="0.79375" max="1" class="meter" ></progress>
     `
 
-		this.meter = this.querySelector(".meter")
+		this.meter = this.querySelector("progress")
+		// console.log(this.meter)
+
 		this.meter.value = this.getAttribute("value") || this.value
 		this.meter.min = this.getAttribute("min") || 0
 		this.meter.max = this.getAttribute("max") || 1.0
@@ -111,16 +114,27 @@ class HealthMeter extends HTMLElement {
 	static get observedAttributes() {
 		return ["value", "min", "max", "label", "hue"]
 	}
-
+	/**
+	 *
+	 * @param {"value"|"min"|"max"|"label"|"hue"} name
+	 * @param {*} oldValue
+	 * @param {*} newValue
+	 */
 	attributeChangedCallback(name, oldValue, newValue) {
-		if (name === "data-value") {
-			this.shadowRoot.querySelector("#content").innerText = `Value: ${newValue}`
+		if (name === "value") {
+			//todo stop querying this.meter every time
+			const progress = this.querySelector("progress")
+			if (progress) progress.value = newValue
 		}
 
-		if (name === "data-status") {
-			this.shadowRoot.querySelector("#content").style.color =
-				newValue === "active" ? "green" : "red"
-		}
+		// 	if (name === "data-value") {
+		// 		this.shadowRoot.querySelector("#content").innerText = `Value: ${newValue}`
+		// 	}
+
+		// 	if (name === "data-status") {
+		// 		this.shadowRoot.querySelector("#content").style.color =
+		// 			newValue === "active" ? "green" : "red"
+		// 	}
 	}
 }
 
