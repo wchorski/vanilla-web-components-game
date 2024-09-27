@@ -1,6 +1,6 @@
 // drag example - https://jsfiddle.net/LULbV/
 // drag cred - https://stackoverflow.com/questions/11169554/how-to-style-dragged-element
-
+// cred example 2 - https://github.com/prof3ssorSt3v3/web-components-props/blob/main/bigbang.js
 class InitComponent extends HTMLElement {
 	constructor() {
 		super()

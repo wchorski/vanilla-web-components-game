@@ -58,6 +58,10 @@ class CharacterSprite extends HTMLElement {
 		this.translateAnim = null
 	}
 
+	get hungerPoints() {
+		return this.getAttribute("hungerPoints")
+	}
+
 	get state() {
 		return this.getAttribute("state")
 	}
