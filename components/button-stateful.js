@@ -52,7 +52,8 @@ class ButtonStateful extends HTMLElement {
         }
 
         button-stateful button:disabled {
-          opacity: 0.3;
+          filter: brightness(0.7);
+          cursor: progress;
         }
 
         @keyframes animSpin {
@@ -179,16 +180,11 @@ class ButtonStateful extends HTMLElement {
 
 	disconnectedCallback() {
 		// remove any event listeners
-		// this.removeEventListener("click", this.onAction)
-		console.log("button-stateful removed from page.")
+		this.removeEventListener("click", this.onAction)
 	}
 
 	onAction() {
-		// this.state = "loading"
-		// this.button.disabled = true
-		// this.errorMsg = ""
 		this._action()
-		// console.log("onAction")
 	}
 }
 customElements.define("button-stateful", ButtonStateful)

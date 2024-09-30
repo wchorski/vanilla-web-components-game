@@ -49,11 +49,8 @@
 				y="100"
 			></character-sprite>
 
-			<!-- <fruit-item type="round" x="0" y="0" hungerValue="0.2"></fruit-item> -->
 			<fruit-item type="tri" x="40" y="50" hungerValue="0.5"></fruit-item>
 			<fruit-item type="curved" x="20" y="100" hungerValue="0.9"></fruit-item>
-
-			<!-- <drop-zone class="basket"></drop-zone> -->
 
 			<div id="shop">
 				<h2>Shop</h2>
@@ -71,13 +68,6 @@
 			</div>
 		</div>
 
-		<!-- <button onclick="moveCharacter()">Move Character</button> -->
-
-		<!-- <a href="https://www.youtube.com/watch?v=4ZCJDf5gjLA">
-			Go Make Things tutorial
-		</a>
-		<br />
-		<br /> -->
 		<div class="flex ui_wrap">
 			<number-counter class="number-counter">
 				<button
@@ -89,69 +79,21 @@
 				>
 					+
 				</button>
-				<!-- <button class="subtract" title="subtract" aria-label="subtract">
-					-
-				</button> -->
 				<img src="sprites/ring.png" alt="points icon" class="ring-icon" />
 				<span class="points-number" id="pointsDisplay"> 0 </span>
 			</number-counter>
 
-			<!-- <button aria-label="feed fruit" title="feed fruit" id="setHunger">
-				<div class="fruits_wrap">
-					<img
-						class="fruits"
-						src="./sprites/fruits.png"
-						alt="fruits icon"
-						width="60px"
-					/>
-				</div>
-			</button> -->
-
 			<div class="meters_wrap" id="dashboard">
-				<!-- <health-meter
-					class="hungerMeter"
-					value="1.0"
-					min="0"
-					max="1.0"
-					label="hunger"
-					hue="17"
-				></health-meter>
-
-				<health-meter
-					class="sleepMeter"
-					value="0.4"
-					min="0"
-					max="1.0"
-					label="sleep"
-					hue="172"
-				></health-meter>
-
-				<health-meter
-					class="energyMeter"
-					value="0.6"
-					min="0"
-					max="1.0"
-					label="energy"
-					hue="272"
-				></health-meter>
-
-				<health-meter
-					class="happynessMeter"
-					value="0.5"
-					min="0"
-					max="1.0"
-					label="happyness"
-					hue="72"
-				></health-meter> -->
+				<!-- generated from script.js initCharacterUI() -->
 			</div>
+
+			<button-stateful
+				label="save"
+				id="savedata"
+				action="saveData()"
+			></button-stateful>
 		</div>
 
-		<!-- <button id="savedata" type="button">Save</button> -->
-		<button-stateful
-			label="save"
-			id="savedata"
-			action="saveData()"
-		></button-stateful>
 		<hr />
 
 		<!-- CouchDB STUFF -->

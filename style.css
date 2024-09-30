@@ -29,9 +29,7 @@ body {
 }
 
 .meters_wrap {
-	padding-inline: 10px;
 	display: grid;
-	gap: 1px;
 
 	h2 {
 		margin: 0;
@@ -63,7 +61,7 @@ button {
 	transition-duration: 0.3s;
 }
 
-button:active {
+button:active:not(:disabled) {
 	border: solid 2px #d4b758;
 	background-color: #383535;
 	transform: translateY(2px);
@@ -110,7 +108,10 @@ img {
 }
 
 .ui_wrap {
-	padding-inline: 1rem;
+	padding: 10px;
+	> div {
+		display: contents;
+	}
 }
 
 .number-counter {

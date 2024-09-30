@@ -97,7 +97,6 @@ class ShopItem extends HTMLElement {
 		this.costLabel.innerHTML = this.cost
 
 		//? functions
-		// this.onDrag()
 		this.addEventListener("pointerdown", this.onTap)
 	}
 
@@ -113,20 +112,6 @@ class ShopItem extends HTMLElement {
 		//todo howto get `hungerValue` from fruit-item component. or maybe use some sort of global switch statement with this.type
 		purchasedFruitItem.setAttribute("hungerValue", this.hungerValue)
 		window.playfield.appendChild(purchasedFruitItem)
-		//todo
-		// 1. remove from ringPoints
-		// 2. randomly place the fruit
-		// 3. try to spawn while dragging fruit (onmousdown?)
 	}
-
-	// onDrag() {
-	// 	this.addEventListener(
-	// 		"dragstart",
-	// 		(e) => {
-	// 			console.log("shop-item draggy")
-	// 		},
-	// 		false
-	// 	)
-	// }
 }
 customElements.define("shop-item", ShopItem)

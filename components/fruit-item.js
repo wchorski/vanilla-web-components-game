@@ -20,10 +20,6 @@ class FruitItem extends HTMLElement {
 		this.onTouchMove = this.onTouchMove.bind(this)
 		this.onTouchEnd = this.onTouchEnd.bind(this)
 
-		// this.onMouseDown = this.onMouseDown.bind(this)
-		// this.onMouseMove = this.onMouseMove.bind(this)
-		// this.onMouseUp = this.onMouseUp.bind(this)
-
 		this.onDragStart = this.onDragStart.bind(this)
 		this.onDragEnd = this.onDragEnd.bind(this)
 	}
@@ -128,15 +124,8 @@ class FruitItem extends HTMLElement {
 		return ["type", "x", "y", "hungerValue"]
 	}
 
-	// onClick() {
-	// 	this.addEventListener("click", () => {
-	// 		console.log("fruit click: " + this.type)
-	// 	})
-	// }
-
 	onDragStart(e) {
 		this.classList.add("drag-cursor")
-		// window.g_DraggedElement = e.target
 
 		this.style.opacity = "0.2"
 	}

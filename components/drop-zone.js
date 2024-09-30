@@ -11,11 +11,6 @@ class DropZone extends HTMLElement {
 		this.onTouchMove = this.onTouchMove.bind(this)
 		this.onTouchEnd = this.onTouchEnd.bind(this)
 
-		// this.onMouseEnter = this.onMouseEnter.bind(this)
-		// this.onPointerUp = this.onPointerUp.bind(this)
-		// this.onPointerEnter = this.onPointerEnter.bind(this)
-		// this.onPointerLeave = this.onPointerLeave.bind(this)
-
 		this.touchActive = false
 	}
 	connectedCallback() {
@@ -52,11 +47,6 @@ class DropZone extends HTMLElement {
 		this.addEventListener("dragenter", this.onDragEnter)
 		this.addEventListener("dragleave", this.onDragLeave)
 
-		// this.addEventListener("mouseenter", this.onMouseEnter)
-		// this.addEventListener("pointerup", this.onPointerUp)
-		// this.addEventListener("pointerenter", this.onPointerEnter)
-		// this.addEventListener("pointerleave", this.onPointerLeave)
-
 		// Touch support
 		this.addEventListener("touchmove", this.onTouchMove)
 		this.addEventListener("touchend", this.onTouchEnd)
@@ -64,29 +54,11 @@ class DropZone extends HTMLElement {
 		this.classList.add(this.getAttribute("class"))
 		this.classList.add("drop-zone")
 		this.prop = this.getAttribute("prop") || this.prop
-
-		//? functions
-		// this.onDrop()
 	}
 
 	static get observedAttributes() {
 		return ["class"]
 	}
-
-	// onPointerUp(e) {
-	// 	console.log("onPointerUp")
-	// }
-	// onPointerEnter(e) {
-	// 	console.log("onPointerEnter")
-	// 	this.classList.add("over")
-	// }
-	// onPointerLeave(e) {
-	// 	console.log("onPointerLeave")
-	// 	this.classList.remove("over")
-	// }
-	// onMouseEnter(e) {
-	// 	// console.log("onMouseEnter")
-	// }
 
 	// --- Touch Support for Mobile ---
 	onTouchMove(e) {
@@ -104,13 +76,6 @@ class DropZone extends HTMLElement {
 			touch.clientX,
 			touch.clientY
 		)
-
-		console.log(targetElement)
-		// if (this.touchActive) {
-		// 	this.touchActive = false
-		// 	this.classList.remove("over")
-		// 	alert("Element dropped successfully (touch)!")
-		// }
 	}
 
 	// --- Drag and Drop (Desktop) ---
@@ -122,13 +87,6 @@ class DropZone extends HTMLElement {
 		e.preventDefault()
 		e.stopPropagation()
 		this.classList.remove("over")
-		// console.log(e.target)
-
-		// // Handle the drop event
-		// const droppedElementData = e.dataTransfer.getData("text")
-		// if (droppedElementData === "fruit-item") {
-		// 	alert("Element dropped successfully!")
-		// }
 	}
 
 	onDragEnter() {
