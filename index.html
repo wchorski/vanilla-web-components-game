@@ -14,6 +14,7 @@
 		<script src="components/drop-zone.js" type="module" defer></script>
 		<script src="components/shop-item.js" type="module" defer></script>
 		<script src="components/gptdrop-zone.js" type="module" defer></script>
+		<script src="components/button-stateful.js" type="module" defer></script>
 	</head>
 	<body>
 		<div class="playfield disable-drag" id="playfield">
@@ -79,7 +80,13 @@
 		<br /> -->
 		<div class="flex ui_wrap">
 			<number-counter class="number-counter">
-				<button class="add" title="add" aria-label="add" id="addToPoints">
+				<button
+					class="add"
+					title="add"
+					aria-label="add"
+					id="addToPoints"
+					type="button"
+				>
 					+
 				</button>
 				<!-- <button class="subtract" title="subtract" aria-label="subtract">
@@ -139,10 +146,16 @@
 			</div>
 		</div>
 
-		<button id="savedata">Save</button>
+		<!-- <button id="savedata" type="button">Save</button> -->
+		<button-stateful
+			label="save"
+			id="savedata"
+			action="saveData()"
+		></button-stateful>
 		<hr />
-		<!-- TEST STUFF -->
-		<form id="loginForm">
+
+		<!-- CouchDB STUFF -->
+		<!-- <form id="loginForm">
 			<input id="username" placeholder="name" />
 			<input id="password" placeholder="password" type="password" />
 			<button type="submit">LOGIN!</button>
@@ -173,7 +186,6 @@
 					.then((res) => res.text())
 					.then((res) => (output.innerText = res))
 			})
-			// -----
 
 			const testDB_Btn = document.getElementById("testDB")
 
@@ -214,6 +226,6 @@
 					console.error("Error fetching characters:", error)
 				}
 			}
-		</script>
+		</script> -->
 	</body>
 </html>

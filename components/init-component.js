@@ -6,6 +6,7 @@ class InitComponent extends HTMLElement {
 		super()
 		// props have 3 places `constructor()`, `this.getAttribute("prop")`, and `observedAttributes()`
 		this.prop = "custom_prop"
+		this.onClick = this.onClick.bind(this)
 	}
 	connectedCallback() {
 		//todo how to get html syntax highlighting?
@@ -16,7 +17,9 @@ class InitComponent extends HTMLElement {
         }
       </style>
 
-      <div></div>
+      <button>
+        init-component
+      </button>
     `
 
 		this.innerHTML = html
@@ -24,17 +27,43 @@ class InitComponent extends HTMLElement {
 		this.prop = this.getAttribute("prop") || this.prop
 
 		//? functions
-		this.onClick()
+		this.addEventListener("click", this.onClick)
 	}
 
 	static get observedAttributes() {
 		return ["prop"]
 	}
 
+	get prop() {
+		return this.getAttribute("prop")
+	}
+	/** @param {string} value */
+	set prop(value) {
+		this.setAttribute("prop", value)
+	}
+
+	/**
+	 *
+	 * @param {"prop"} name
+	 * @param {*} oldValue
+	 * @param {*} newValue
+	 */
+	attributeChangedCallback(name, oldValue, newValue) {
+		//todo here is where i should change animation and sprites.
+		//as i set this.state handle all the visual stuff down here
+		// console.log(`character-sprite: `, name, oldValue, newValue)
+		if (name === "prop" && oldValue !== newValue) {
+			console.log("attributeChangedCallback: ", newValue)
+		}
+	}
+
+	disconnectedCallback() {
+		// remove any event listeners
+		console.log("init-component removed from page.")
+	}
+
 	onClick() {
-		this.addEventListener("click", () => {
-			console.log("init-component clicky")
-		})
+		console.log("init-component clicky")
 	}
 }
 customElements.define("init-component", InitComponent)

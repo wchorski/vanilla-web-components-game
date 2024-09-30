@@ -2,30 +2,49 @@
 // window.globalMessage = "Hello from the global scope!"
 /**
  * @typedef {import('./types/Character.js').Character} Character
+ * @typedef {import('./types/ButtonState.js').ButtonState} ButtonState
  */
 import { clamp } from "./lib/clamp.js"
 window.g_DraggedElement = null
 window.playfield = document.getElementById("playfield")
 const dashboard = document.querySelector("#dashboard")
 const characterActors = document.querySelectorAll(".character")
+
+/** @type {ButtonState} */
 const saveBtn = document.querySelector("#savedata")
 
-function SaveData() {
-	/**@param {Character[]} characterActors */
-	const charObjs = Array.from(characterActors).map((char) => ({
-		id: char.id,
-		hunger: char.hunger,
-		sleep: char.sleep,
-		energy: char.energy,
-		happyness: char.happyness,
-	}))
+async function saveData() {
+	try {
+		const isError = false
+		saveBtn.state = "loading"
+		await new Promise((resolve) => setTimeout(resolve, 3000))
 
-	Array.from(charObjs).map((char) => {
-		localStorage.setItem(char.id, JSON.stringify(char))
-	})
+		/**@param {Character[]} characterActors */
+		const charObjs = Array.from(characterActors).map((char) => ({
+			id: char.id,
+			hunger: char.hunger,
+			sleep: char.sleep,
+			energy: char.energy,
+			happyness: char.happyness,
+		}))
+
+		Array.from(charObjs).map((char) => {
+			localStorage.setItem(char.id, JSON.stringify(char))
+		})
+
+		if (isError) throw new Error("uh ohh oopsie")
+
+		saveBtn.state = "success"
+		await new Promise((resolve) => setTimeout(resolve, 2000))
+		saveBtn.state = "idle"
+	} catch (error) {
+		saveBtn.state = "error"
+		saveBtn.errorMsg = "!!! save data error: " + error
+		console.log("!!! save data error: " + error)
+	}
 }
 
-setInterval(SaveData, 5000)
+setInterval(saveData, 10000)
 
 /**@param {number} points */
 let points = localStorage.getItem("points")
@@ -218,12 +237,9 @@ export function buyItemWithPoints(inputPoints) {
 }
 
 function initGame() {
+	initCharacterUI()
 	pointsDisplay.textContent = points
-	// hungerMeter.querySelector(".meter").setAttribute("value", hungerPoints)
-	// happynessMeter.querySelector(".meter").setAttribute("value", happynessPoints)
-	// sleepMeter.querySelector(".meter").setAttribute("value", sleepPoints)
-	// energyMeter.querySelector(".meter").setAttribute("value", energyPoints)
-	saveBtn.addEventListener("click", () => SaveData())
+	saveBtn.action = () => saveData()
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -255,6 +271,8 @@ function coroutine(f) {
 }
 
 function initCharacterUI() {
+	if (!characterActors) return
+
 	const getValuesStartingWithChar = () => {
 		return Array.from({ length: localStorage.length }, (_, i) =>
 			localStorage.key(i)
@@ -270,7 +288,27 @@ function initCharacterUI() {
 			})
 	}
 
-	const charValues = getValuesStartingWithChar()
+	const charValues_temp = getValuesStartingWithChar()
+	// todo switch this out when adding egg birth
+	const charValues =
+		charValues_temp.length > 0
+			? charValues_temp
+			: [
+					{
+						id: "char-1",
+						hunger: "0.5",
+						sleep: "0.5",
+						energy: "0.5",
+						happyness: "0.5",
+					},
+					{
+						id: "char-2",
+						hunger: "0.5",
+						sleep: "0.5",
+						energy: "0.5",
+						happyness: "0.5",
+					},
+			  ]
 
 	Array.from(characterActors).map((char) => {
 		const charDash = document.createElement("div")
@@ -332,4 +370,3 @@ function initCharacterUI() {
 		dashboard.appendChild(charDash)
 	})
 }
-initCharacterUI()

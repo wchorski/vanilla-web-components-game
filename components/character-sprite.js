@@ -111,7 +111,8 @@ class CharacterSprite extends HTMLElement {
 		const currentPoints = Number(this.getAttribute("hunger")) || 0.0
 		const clampedPoints = clamp(currentPoints + value, 0, 1)
 		this.setAttribute("hunger", clampedPoints)
-
+		this.healthUi = document.querySelector(`#${this.id}-health-ui`)
+		if (!this.healthUi) return
 		this.healthUi
 			.querySelector("health-meter.hungerMeter")
 			.setAttribute("value", clampedPoints)
@@ -127,6 +128,7 @@ class CharacterSprite extends HTMLElement {
 		this.setAttribute("sleep", clampedPoints)
 		//todo don't query this.healthUi every time. figure out how to only one time
 		this.healthUi = document.querySelector(`#${this.id}-health-ui`)
+		if (!this.healthUi) return
 		this.healthUi
 			.querySelector("health-meter.sleepMeter")
 			.setAttribute("value", clampedPoints)
@@ -140,6 +142,7 @@ class CharacterSprite extends HTMLElement {
 		const currentPoints = Number(this.getAttribute("energy"))
 		const clampedPoints = clamp(currentPoints + value, 0, 1)
 		this.setAttribute("energy", clampedPoints)
+		if (!this.healthUi) return
 		this.healthUi
 			.querySelector("health-meter.energyMeter")
 			.setAttribute("value", clampedPoints)
@@ -153,6 +156,7 @@ class CharacterSprite extends HTMLElement {
 		const currentPoints = Number(this.getAttribute("happyness"))
 		const clampedPoints = clamp(currentPoints + value, 0, 1)
 		this.setAttribute("happyness", clampedPoints)
+		if (!this.healthUi) return
 		this.healthUi
 			.querySelector("health-meter.happynessMeter")
 			.setAttribute("value", clampedPoints)
@@ -377,8 +381,6 @@ class CharacterSprite extends HTMLElement {
 		this.classList.add("char_translate_paused")
 
 		//todo if tummy full then refuse eat
-		console.log(this.hunger)
-
 		if (this.hunger > 0.9) {
 			this.state = "no"
 			// this.setAnimation()
