@@ -2,16 +2,37 @@
  * @typedef {import('./types/Character.js').Character} Character
  * @typedef {import('./types/ButtonState.js').ButtonState} ButtonState
  */
+const defaultCharacters = [
+	{
+		id: "char-1",
+		state: "egg",
+		hunger: 1.0,
+		sleep: 1.0,
+		energy: 1.0,
+		happyness: 1.0,
+	},
+	// {
+	// 	id: "char-2",
+	// 	state: "egg",
+	// 	hunger: 1.0,
+	// 	sleep: 1.0,
+	// 	energy: 1.0,
+	// 	happyness: 1.0,
+	// },
+]
 window.g_DraggedElement = null
 window.playfield = document.getElementById("playfield")
 const dashboard = document.querySelector("#dashboard")
-const characterActors = document.querySelectorAll(".character")
 
 /** @type {ButtonState} */
 const saveBtn = document.querySelector("#savedata")
 
 async function saveData() {
 	try {
+		const characterActors = document.querySelectorAll(".character")
+		if (!characterActors || characterActors.length <= 0)
+			return console.log("!!! no characters on playfield")
+
 		const isError = false
 		saveBtn.state = "loading"
 		await new Promise((resolve) => setTimeout(resolve, 3000))
@@ -19,6 +40,8 @@ async function saveData() {
 		/**@param {Character[]} characterActors */
 		const charObjs = Array.from(characterActors).map((char) => ({
 			id: char.id,
+			state: char.state,
+			birth: char.birth,
 			hunger: char.hunger,
 			sleep: char.sleep,
 			energy: char.energy,
@@ -87,7 +110,7 @@ export function buyItemWithPoints(inputPoints) {
 	}
 
 	points -= inputPoints
-	pointsDisplay.textContent = points
+	pointsDisplay.textContent = String(points)
 	localStorage.setItem("points", points)
 
 	animPoints()
@@ -96,8 +119,8 @@ export function buyItemWithPoints(inputPoints) {
 }
 
 function initGame() {
-	initCharacterUI()
-	pointsDisplay.textContent = points
+	// initCharacterActors()
+	pointsDisplay.textContent = String(points)
 	saveBtn.action = () => saveData()
 }
 
@@ -130,9 +153,7 @@ document.addEventListener("dragover", (event) => {
 // 	}
 // }
 
-function initCharacterUI() {
-	if (!characterActors) return
-
+function initCharacterActors() {
 	const getValuesStartingWithChar = () => {
 		return Array.from({ length: localStorage.length }, (_, i) =>
 			localStorage.key(i)
@@ -149,28 +170,36 @@ function initCharacterUI() {
 	}
 
 	const charValues_temp = getValuesStartingWithChar()
+
 	// todo switch this out when adding egg birth
 	const charValues =
-		charValues_temp.length > 0
-			? charValues_temp
-			: [
-					{
-						id: "char-1",
-						hunger: "0.5",
-						sleep: "0.5",
-						energy: "0.5",
-						happyness: "0.5",
-					},
-					{
-						id: "char-2",
-						hunger: "0.5",
-						sleep: "0.5",
-						energy: "0.5",
-						happyness: "0.5",
-					},
-			  ]
+		charValues_temp.length > 0 ? charValues_temp : defaultCharacters
 
-	Array.from(characterActors).map((char) => {
+	charValues.forEach((char) => {
+		const charEl = document.createElement("character-actor")
+
+		charEl.id = char.id
+		charEl.classList.add("character")
+		charEl.setAttribute("src", "./sprites/chao-neutral-v6.png")
+		charEl.setAttribute("state", char.state)
+		charEl.setAttribute("hunger", char.hunger)
+		charEl.setAttribute("sleep", char.sleep)
+		charEl.setAttribute("energy", char.energy)
+		charEl.setAttribute("happyness", char.happyness)
+		charEl.setAttribute("x", char.x)
+		charEl.setAttribute("y", char.y)
+		window.playfield.appendChild(charEl)
+	})
+
+	initCharacterUI(charValues)
+}
+initCharacterActors()
+
+export function initCharacterUI(charValues) {
+	if (!charValues || charValues.length <= 0)
+		return console.log("!!! no chars found")
+
+	Array.from(charValues).map((char) => {
 		const charDash = document.createElement("div")
 		charDash.id = char.id + "-health-ui"
 		charDash.classList.add("charDash")
@@ -181,10 +210,7 @@ function initCharacterUI() {
 
 		const hungerMeter = document.createElement("health-meter")
 		hungerMeter.setAttribute("class", "hungerMeter")
-		hungerMeter.setAttribute(
-			"value",
-			charValues.find((ch) => ch.id === char.id).hunger || "0.5"
-		)
+		hungerMeter.setAttribute("value", char.hunger || "0.5")
 		hungerMeter.setAttribute("min", "0.0")
 		hungerMeter.setAttribute("max", "1.0")
 		hungerMeter.setAttribute("label", "hunger")
@@ -193,10 +219,7 @@ function initCharacterUI() {
 
 		const sleepMeter = document.createElement("health-meter")
 		sleepMeter.setAttribute("class", "sleepMeter")
-		sleepMeter.setAttribute(
-			"value",
-			charValues.find((ch) => ch.id === char.id).sleep || "0.5"
-		)
+		sleepMeter.setAttribute("value", char.sleep || "0.5")
 		sleepMeter.setAttribute("min", "0.0")
 		sleepMeter.setAttribute("max", "1.0")
 		sleepMeter.setAttribute("label", "sleep")
@@ -205,10 +228,7 @@ function initCharacterUI() {
 
 		const energyMeter = document.createElement("health-meter")
 		energyMeter.setAttribute("class", "energyMeter")
-		energyMeter.setAttribute(
-			"value",
-			charValues.find((ch) => ch.id === char.id).energy || "0.5"
-		)
+		energyMeter.setAttribute("value", char.energy || "0.5")
 		energyMeter.setAttribute("min", "0.0")
 		energyMeter.setAttribute("max", "1.0")
 		energyMeter.setAttribute("label", "energy")
@@ -217,10 +237,7 @@ function initCharacterUI() {
 
 		const happynessMeter = document.createElement("health-meter")
 		happynessMeter.setAttribute("class", "happynessMeter")
-		happynessMeter.setAttribute(
-			"value",
-			charValues.find((ch) => ch.id === char.id).happyness || "0.5"
-		)
+		happynessMeter.setAttribute("value", char.happyness || "0.5")
 		happynessMeter.setAttribute("min", "0.0")
 		happynessMeter.setAttribute("max", "1.0")
 		happynessMeter.setAttribute("label", "happyness")

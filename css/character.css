@@ -1,7 +1,7 @@
 /* cred - https://codepen.io/punkydrewster713/pen/LYYQBEZ */
 /* cred - https://www.youtube.com/watch?v=ekI7vjkFrGA*/
 
-.character {
+character-actor {
 	/* sprite scale */
 	--pixel-size: 1;
 	/* original sprite size */
@@ -21,7 +21,7 @@
 	transition-timing-function: linear;
 }
 
-.sprite_wrap {
+character-actor .sprite_wrap {
 	width: 24px;
 	height: 24px;
 	/* width: calc(var(--char-w) * var(--pixel-size) + var(--canvas-overflow)); */
@@ -32,15 +32,15 @@
 	display: block;
 }
 
-.character:has(.sprite_wrap .face_up) .emote_wrap,
-.character:has(.sprite_wrap .face_right) .emote_wrap {
+character-actor:has(.sprite_wrap .face_up) .emote_wrap,
+character-actor:has(.sprite_wrap .face_right) .emote_wrap {
 	transform: scaleX(-1);
 }
-.sprite_wrap:has(.face_right) {
+character-actor .sprite_wrap:has(.face_right) {
 	transform: scaleX(-1);
 }
 
-.emote_wrap {
+character-actor .emote_wrap {
 	width: 24px;
 	height: 16px;
 	overflow: hidden;
@@ -50,7 +50,7 @@
 	/* left: 70px; */
 }
 
-img.char_emote {
+character-actor img.char_emote {
 	width: auto;
 	image-rendering: pixelated;
 	position: absolute;
@@ -62,7 +62,7 @@ img.char_emote {
 	bottom: 0;
 }
 
-.char_spritesheet {
+character-actor .char_spritesheet {
 	image-rendering: pixelated;
 	animation-name: animSpritesheet;
 	animation-play-state: running;
@@ -74,7 +74,7 @@ img.char_emote {
 	/* width: calc(var(--sheet-w) * var(--pixel-size)); */
 	position: absolute;
 }
-.char_shadow {
+character-actor .char_shadow {
 	image-rendering: pixelated;
 	position: absolute;
 	/* width: calc(var(--char-w) * var(--pixel-size)); */
@@ -83,69 +83,91 @@ img.char_emote {
 	/* height: calc(var(--char-h) * var(--pixel-size)); */
 }
 
-.face_down {
+character-actor .face_down {
 	top: 0;
 }
-.face_left {
+character-actor .face_left {
 	top: calc(var(--char-h) * var(--pixel-size) * -1);
 	/* top: -24px; */
 }
-.face_right {
+character-actor .face_right {
 	top: calc(var(--char-h) * var(--pixel-size) * -1);
 }
-.face_up {
+character-actor .face_up {
 	top: calc(var(--char-h) * var(--pixel-size) * -2);
 }
-.angry {
+character-actor .angry {
 	top: calc(var(--char-h) * var(--pixel-size) * -3);
 }
-.no {
+character-actor .no {
 	top: calc(var(--char-h) * var(--pixel-size) * -4);
 }
-.crouch {
+character-actor .crouch {
 	top: calc(var(--char-h) * var(--pixel-size) * -5);
 }
-.crawl {
+character-actor .crawl {
 	top: calc(var(--char-h) * var(--pixel-size) * -6);
 }
-.cry {
+character-actor .cry {
 	top: calc(var(--char-h) * var(--pixel-size) * -7);
 }
-.sway {
+character-actor .sway {
 	top: calc(var(--char-h) * var(--pixel-size) * -8);
 }
-.eat {
+character-actor .eat {
 	top: calc(var(--char-h) * var(--pixel-size) * -9);
 }
-.eat_favorite {
+character-actor .eat_favorite {
 	top: calc(var(--char-h) * var(--pixel-size) * -10);
 }
-.excite {
+character-actor .excite {
 	top: calc(var(--char-h) * var(--pixel-size) * -11);
 }
-.sleep {
+character-actor .sleep {
 	top: calc(var(--char-h) * var(--pixel-size) * -12);
 }
-.excite_2 {
+character-actor .excite_2 {
 	top: calc(var(--char-h) * var(--pixel-size) * -13);
 }
-.nasty {
+character-actor .nasty {
 	top: calc(var(--char-h) * var(--pixel-size) * -14);
 }
-.point {
+character-actor .point {
 	top: calc(var(--char-h) * var(--pixel-size) * -15);
 }
-.yawn {
+character-actor .yawn {
 	top: calc(var(--char-h) * var(--pixel-size) * -16);
 }
-.sit_down {
+character-actor .sit_down {
 	top: calc(var(--char-h) * var(--pixel-size) * -17);
 }
-.think {
+character-actor .think {
 	top: calc(var(--char-h) * var(--pixel-size) * -18);
 }
-.sit_left {
+character-actor .sit_left {
 	top: calc(var(--char-h) * var(--pixel-size) * -19);
+}
+character-actor .egg {
+	animation: animEggShake 3s infinite linear;
+	top: calc(var(--char-h) * var(--pixel-size) * -20);
+}
+
+@keyframes animEggShake {
+	0% {
+		transform: translate3d(0, 0, 0);
+	}
+	97% {
+		transform: translate3d(0, 0, 0);
+	}
+	98% {
+		transform: translate3d(1px, 0, 0);
+	}
+	99% {
+		transform: translate3d(-1px, 0, 0);
+	}
+	100% {
+		transform: translate3d(0, 0, 0);
+	}
 }
 
 @keyframes animSpritesheet {
@@ -161,11 +183,11 @@ img.char_emote {
 	}
 }
 
-.char_translate_paused {
+character-actor .char_translate_paused {
 	animation-play-state: paused;
 }
 
-.char_translate_running {
+character-actor .char_translate_running {
 	animation-play-state: running;
 }
 

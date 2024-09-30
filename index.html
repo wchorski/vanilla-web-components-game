@@ -6,15 +6,14 @@
 		<title>Chao Pet</title>
 		<link rel="stylesheet" href="style.css" />
 		<link rel="stylesheet" href="./css/character.css" />
-		<script src="script.js" type="module" defer></script>
+		<script src="components/character-actor.js" type="module" defer></script>
 		<script src="components/number-counter.js" type="module" defer></script>
-		<script src="components/character-sprite.js" type="module" defer></script>
 		<script src="components/health-meter.js" type="module" defer></script>
 		<script src="components/fruit-item.js" type="module" defer></script>
 		<script src="components/drop-zone.js" type="module" defer></script>
 		<script src="components/shop-item.js" type="module" defer></script>
-		<script src="components/gptdrop-zone.js" type="module" defer></script>
 		<script src="components/button-stateful.js" type="module" defer></script>
+		<script src="script.js" type="module" defer></script>
 	</head>
 	<body>
 		<div class="playfield disable-drag" id="playfield">
@@ -23,31 +22,33 @@
 				src="sprites/garden.png"
 				alt="playfield background garden"
 			/>
-			<character-sprite
+			<!-- <character-actor
 				id="char-1"
-				class="character char_translate"
+				class="character"
 				alt="Character"
-				src="./sprites/chao-neutral-v5.png"
-				state="eat"
+				src="./sprites/chao-neutral-v6.png"
+				state="egg"
 				hunger="0.5"
 				sleep="0.5"
 				energy="0.5"
 				happyness="0.5"
-			></character-sprite>
+				x="0"
+				y="0"
+			></character-actor>
 
-			<character-sprite
+			<character-actor
 				id="char-2"
-				class="character char_translate"
+				class="character"
 				alt="Character"
-				src="./sprites/chao-neutral-v5.png"
-				state="eat"
+				src="./sprites/chao-neutral-v6.png"
+				state="egg"
 				hunger="0.5"
 				sleep="0.5"
 				energy="0.5"
 				happyness="0.5"
-				x="100"
-				y="100"
-			></character-sprite>
+				x="0"
+				y="0"
+			></character-actor> -->
 
 			<fruit-item type="tri" x="40" y="50" hungerValue="0.5"></fruit-item>
 			<fruit-item type="curved" x="20" y="100" hungerValue="0.9"></fruit-item>
@@ -56,13 +57,36 @@
 				<h2>Shop</h2>
 				<ul>
 					<li>
-						<shop-item type="round" cost="30" hungerValue="0.3"></shop-item>
+						<shop-item
+							type="round"
+							cost="30"
+							hungerValue="0.3"
+							src="./sprites/fruits-v2.png"
+						></shop-item>
 					</li>
 					<li>
-						<shop-item type="curved" cost="61" hungerValue="0.7"></shop-item>
+						<shop-item
+							type="curved"
+							cost="61"
+							hungerValue="0.7"
+							src="./sprites/fruits-v2.png"
+						></shop-item>
 					</li>
 					<li>
-						<shop-item type="tri" cost="45" hungerValue="0.5"></shop-item>
+						<shop-item
+							type="tri"
+							cost="45"
+							hungerValue="0.5"
+							src="./sprites/fruits-v2.png"
+						></shop-item>
+					</li>
+					<li>
+						<shop-item
+							type="egg"
+							cost="1500"
+							hungerValue="0.0"
+							src="./sprites/egg.png"
+						></shop-item>
 					</li>
 				</ul>
 			</div>

@@ -9,11 +9,15 @@ browser based pet simulator game built with
 
 ## Features
 
-- Heath Mechanics
+- Health Mechanics
   - Hunger
+  - Sleep
+  - Energy
+  - Happyness
 - Economy (Rings)
 - Feed with fruit
 - Game stats save to `Local Storage`
+- Mult pet management
 
 ## TODO
 

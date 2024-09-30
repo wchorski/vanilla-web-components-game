@@ -1,5 +1,9 @@
 /**
+ * @typedef {import('../types/Character.js').Character} Character
  * @typedef {import('../types/Character.js').State} CharState
+ * @typedef {import('../types/Character.js').AnimState} AnimState
+ * @typedef {import('../types/Coordinates.js').Coordinates2d} Coordinates2d
+ * @typedef {import('../types/Coordinates.js').CardinalDirections} CardinalDirections
  */
 import { triggerRandomRoutine } from "../script.js"
 import { clamp } from "../lib/clamp.js"
@@ -28,24 +32,27 @@ const animStates = [
 	"sit_down",
 	"think",
 	"sit_left",
+	"egg",
 ]
 
 // todo add html template here
-
-class CharacterSprite extends HTMLElement {
+/**
+ * @extends HTMLElement
+ * @example
+ * <character-actor id="char-1" class="character char_translate" alt="Character" src="./sprites/chao-neutral-v6.png" state="eat" hunger="0.5" sleep="0.5" energy="0.5" happyness="0.5"></character-actor>
+ */
+class CharacterActor extends HTMLElement {
 	constructor() {
 		super()
-		this.sprite = null
-		this.controller = null
-		this.sleep = 1.0
-		//todo either
-		//1. distance travel ups or lowers speed
-		//2. speed up or low depending on distance
-		this.speed = 7000
-		this.x = 0
-		this.y = 0
-		this.translateAnim = null
-		this.healthUi = document.querySelector(`#${this.id}-health-ui`)
+		// this.sprite = null
+		// this.controller = null
+		// this.sleep = 1.0
+		// //todo either
+		// //1. distance travel ups or lowers speed
+		// //2. speed up or low depending on distance
+		// this.speed = 7000
+		// this.translateAnim = null
+		// this.healthUi = document.querySelector(`#${this.id}-health-ui`)
 	}
 
 	connectedCallback() {
@@ -79,12 +86,24 @@ class CharacterSprite extends HTMLElement {
 
 		const dropZone = document.createElement("drop-zone")
 		sprite_wrap.appendChild(dropZone)
+		this.x = Number(this.getAttribute("x")) || 0
+		this.y = Number(this.getAttribute("y")) || 0
+		this.style.top = String(this.y) + "px"
+		this.style.left = String(this.x) + "px"
+		this.speed = this.getAttribute("speed") || 7000
 
-		this.transformRoutine()
-
-		// this.state = this.getAttribute("state") || this.state
 		// this.setAnimation()
-		// this.updateTranslate()
+		switch (this.state) {
+			case "egg":
+				this.eggRoutine()
+				break
+
+			default:
+				this.transformRoutine()
+				break
+		}
+
+		this.setAnimation()
 	}
 
 	// disconnectedCallback() {
@@ -95,6 +114,29 @@ class CharacterSprite extends HTMLElement {
 	static get observedAttributes() {
 		return ["src", "alt", "state", "x", "y", "x_dest", "y_dest"]
 	}
+
+	get speed() {
+		return this.getAttribute("speed")
+	}
+	set speed(value) {
+		this.setAttribute("speed", value)
+	}
+
+	/**
+	 * todo why does this `|string` remove the auto complete?
+	 * @type {CharState|string}
+	 * @attr {CharState|string} state
+	 */
+	get state() {
+		return this.getAttribute("state") || "sit_down"
+	}
+
+	/** @param {CharState} value */
+	set state(value) {
+		if (this.state !== value) {
+			this.setAttribute("state", value)
+		}
+	}
 	get id() {
 		return this.getAttribute("id")
 	}
@@ -104,72 +146,62 @@ class CharacterSprite extends HTMLElement {
 	}
 
 	get hunger() {
-		return this.getAttribute("hunger")
+		return Number(this.getAttribute("hunger"))
 	}
 	/** @param {number} value */
 	set hunger(value) {
 		const currentPoints = Number(this.getAttribute("hunger")) || 0.0
 		const clampedPoints = clamp(currentPoints + value, 0, 1)
-		this.setAttribute("hunger", clampedPoints)
+		this.setAttribute("hunger", String(clampedPoints))
 		this.healthUi = document.querySelector(`#${this.id}-health-ui`)
 		if (!this.healthUi) return
 		this.healthUi
 			.querySelector("health-meter.hungerMeter")
-			.setAttribute("value", clampedPoints)
+			.setAttribute("value", String(clampedPoints))
 	}
 
 	get sleep() {
-		return this.getAttribute("sleep")
+		return Number(this.getAttribute("sleep"))
 	}
 	/** @param {number} value */
 	set sleep(value) {
 		const currentPoints = Number(this.getAttribute("sleep"))
 		const clampedPoints = clamp(currentPoints + value, 0, 1)
-		this.setAttribute("sleep", clampedPoints)
+		this.setAttribute("sleep", String(clampedPoints))
 		//todo don't query this.healthUi every time. figure out how to only one time
 		this.healthUi = document.querySelector(`#${this.id}-health-ui`)
 		if (!this.healthUi) return
 		this.healthUi
 			.querySelector("health-meter.sleepMeter")
-			.setAttribute("value", clampedPoints)
+			.setAttribute("value", String(clampedPoints))
 	}
 
 	get energy() {
-		return this.getAttribute("energy")
+		return Number(this.getAttribute("energy"))
 	}
 	/** @param {number} value */
 	set energy(value) {
 		const currentPoints = Number(this.getAttribute("energy"))
 		const clampedPoints = clamp(currentPoints + value, 0, 1)
-		this.setAttribute("energy", clampedPoints)
+		this.setAttribute("energy", String(clampedPoints))
 		if (!this.healthUi) return
 		this.healthUi
 			.querySelector("health-meter.energyMeter")
-			.setAttribute("value", clampedPoints)
+			.setAttribute("value", String(clampedPoints))
 	}
 
 	get happyness() {
-		return this.getAttribute("happyness")
+		return Number(this.getAttribute("happyness"))
 	}
 	/** @param {number} value */
 	set happyness(value) {
 		const currentPoints = Number(this.getAttribute("happyness"))
 		const clampedPoints = clamp(currentPoints + value, 0, 1)
-		this.setAttribute("happyness", clampedPoints)
+		this.setAttribute("happyness", String(clampedPoints))
 		if (!this.healthUi) return
 		this.healthUi
 			.querySelector("health-meter.happynessMeter")
-			.setAttribute("value", clampedPoints)
-	}
-
-	get state() {
-		return this.getAttribute("state")
-	}
-	/** @param {CharState} value */
-	set state(value) {
-		if (this.state !== value) {
-			this.setAttribute("state", value)
-		}
+			.setAttribute("value", String(clampedPoints))
 	}
 	/**
 	 *
@@ -179,10 +211,8 @@ class CharacterSprite extends HTMLElement {
 	 */
 	attributeChangedCallback(name, oldValue, newValue) {
 		//todo here is where i should change animation and sprites.
-		//as i set this.state handle all the visual stuff down here
-		// console.log(`character-sprite: `, name, oldValue, newValue)
 		if (name === "state" && oldValue !== newValue) {
-			// console.log("attributeChangedCallback: ", newValue)
+			// console.log("attributeChangedCallback: ", this.state)
 			this.setAnimation()
 		}
 
@@ -207,10 +237,13 @@ class CharacterSprite extends HTMLElement {
 		const signal = this.controller.signal
 
 		this.classList.remove("char_translate_paused")
+		//todo don't query playfield everytime. pass down through prop?
+		const playfieldEl = document.querySelector("#playfield")
+		// const playfieldEl = window.playfield
 
 		const playfieldBounds = {
-			x: window.playfield.clientWidth - this.offsetWidth,
-			y: window.playfield.clientHeight - this.offsetHeight,
+			x: playfieldEl.clientWidth - this.offsetWidth,
+			y: playfieldEl.clientHeight - this.offsetHeight,
 		}
 
 		const destinationPos = {
@@ -246,7 +279,9 @@ class CharacterSprite extends HTMLElement {
 				{ transform: `translate(${destination})` },
 			],
 			{
-				duration: this.speed,
+				// todo
+				// duration: this.speed,
+				duration: 7000,
 				easing: "linear",
 				fill: "forwards",
 			}
@@ -328,6 +363,31 @@ class CharacterSprite extends HTMLElement {
 			onFinish: finish,
 			signal: signal,
 			funcs: [() => (this.happyness = 0.1 / steps)],
+		})
+	}
+
+	eggRoutine() {
+		this.abortOngoingRoutine()
+		this.controller = new AbortController()
+		const signal = this.controller.signal
+
+		this.state = "egg"
+
+		this.classList.add("char_translate_paused")
+
+		const finish = () => {
+			this.birth = new Date().toISOString()
+			this.sitRoutine()
+		}
+
+		const steps = 1
+
+		durationInSteps({
+			duration: 20000,
+			steps,
+			onFinish: finish,
+			signal: signal,
+			funcs: [() => console.log("egg timer: wait 20 second to hatch")],
 		})
 	}
 
@@ -481,11 +541,13 @@ class CharacterSprite extends HTMLElement {
 	}
 
 	setAnimation() {
+		// @ts-ignore
 		animProperties(this.state, this)
+		// console.log("setAnimation; ", this.state)
 
 		if (this.sprite) {
 			animStates.forEach((dir) => this.sprite.classList.remove(dir))
-
+			// @ts-ignore
 			if (this.state && animStates.includes(this.state)) {
 				this.sprite.classList.add(this.state)
 			}
@@ -493,8 +555,13 @@ class CharacterSprite extends HTMLElement {
 	}
 }
 
-customElements.define("character-sprite", CharacterSprite)
+customElements.define("character-actor", CharacterActor)
 
+/**
+ *
+ * @param {CharState} state
+ * @param {Character} elCharacter
+ */
 function animProperties(state, elCharacter) {
 	let animFrames = 4
 
@@ -532,6 +599,7 @@ function animProperties(state, elCharacter) {
 		case "face_still":
 		case "sit_down":
 		case "sit_left":
+		case "egg":
 			animFrames = 1
 			break
 		//TODO default isn't needed but could reduce redundant code
@@ -540,9 +608,14 @@ function animProperties(state, elCharacter) {
 			break
 	}
 
-	elCharacter.style.setProperty("--anim-frames", animFrames)
+	elCharacter.style.setProperty("--anim-frames", String(animFrames))
 }
-
+/**
+ *
+ * @param {Coordinates2d} start
+ * @param {Coordinates2d} destination
+ * @returns {CardinalDirections}
+ */
 function getDominantDirection(start, destination) {
 	const yDiff = destination.y - start.y
 	const xDiff = destination.x - start.x
