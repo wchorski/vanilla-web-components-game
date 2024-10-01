@@ -1,0 +1,46 @@
+button-stateful {
+	display: flex;
+	gap: 5px;
+}
+button-stateful button {
+	color: white;
+	border-color: white;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 3px;
+}
+button-stateful .spin {
+	animation-name: animSpin;
+	animation-duration: 3s;
+	animation-timing-function: linear;
+	animation-iteration-count: infinite;
+}
+
+button-stateful .error {
+	padding-inline: 5px;
+	border-left-style: solid;
+	border-left-width: 3px;
+	border-left-color: red;
+	margin-block: 0;
+	display: flex;
+	align-items: center;
+}
+
+button-stateful .error:empty {
+	visibility: hidden;
+}
+
+button-stateful button:disabled {
+	filter: brightness(0.7);
+	cursor: progress;
+}
+
+@keyframes animSpin {
+	from {
+		transform: rotate(0deg);
+	}
+	to {
+		transform: rotate(360deg);
+	}
+}

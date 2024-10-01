@@ -4,10 +4,13 @@
 import { buyItemWithPoints, initCharacterUI } from "../script.js"
 /**
  * @extends HTMLElement
+ * @element shop-item
  * @example
  * todo paste example
  */
 class ShopItem extends HTMLElement {
+	static stylesheetAdded = false
+
 	constructor() {
 		super()
 		// props have 3 places `constructor()`, `this.getAttribute("prop")`, and `observedAttributes()`
@@ -15,18 +18,26 @@ class ShopItem extends HTMLElement {
 		this.hungerValue = 0.3
 		this.cost = 30
 		this.onTap = this.onTap.bind(this)
+
+		if (!ShopItem.stylesheetAdded) {
+			this.loadStylesheet()
+			ShopItem.stylesheetAdded = true
+		}
+
+		this.render()
 	}
+	async loadStylesheet() {
+		const response = await fetch("../css/shop-item.css")
+		const cssText = await response.text()
+		const style = document.createElement("style")
+		style.textContent = cssText
+
+		this.appendChild(style)
+	}
+
 	connectedCallback() {
 		//todo how to get html syntax highlighting?
-		const html = String.raw`
 
-      <div class="fruit-item">
-        <img class="icon no-select" src="./sprites/fruits-v2.png" alt="Shop item" />
-      </div>
-      <span class="costLabel"> ${this.cost} </span>
-    `
-
-		this.innerHTML = html
 		// this.type = this.getAttribute("type") || this.type
 		this.hungerValue = this.getAttribute("hungerValue") || this.hungerValue
 		this.cost = parseInt(this.getAttribute("cost") || this.cost)
@@ -120,6 +131,16 @@ class ShopItem extends HTMLElement {
 				window.playfield.appendChild(purchasedFruitItem)
 				break
 		}
+	}
+
+	render() {
+		this.innerHTML = String.raw`
+
+      <div class="fruit-item">
+        <img class="icon no-select" src="./sprites/fruits-v2.png" alt="Shop item" />
+      </div>
+      <span class="costLabel"> ${this.cost} </span>
+    `
 	}
 }
 customElements.define("shop-item", ShopItem)

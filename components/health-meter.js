@@ -1,21 +1,37 @@
 /**
  * <progress> element with label
+ * @extends HTMLElement
  * @element health-meter
+ * @example
+ * todo paste example
  */
 export class HealthMeter extends HTMLElement {
+	static stylesheetAdded = false
+
 	constructor() {
 		super()
 		// this.value = 0.5
 		this.isInitialized = false
+
+		if (!HealthMeter.stylesheetAdded) {
+			this.loadStylesheet()
+			HealthMeter.stylesheetAdded = true
+		}
+
+		this.render()
+	}
+
+	async loadStylesheet() {
+		const response = await fetch("../css/health-meter.css")
+		const cssText = await response.text()
+		const style = document.createElement("style")
+		style.textContent = cssText
+
+		this.appendChild(style)
 	}
 
 	connectedCallback() {
 		// this.value = Number(this.getAttribute("value"))
-
-		this.innerHTML = `
-      <label>${this.label}</label>
-      <progress value="0.79375" max="1" class="meter" ></progress>
-    `
 
 		this.labelEl = this.querySelector("label")
 		this.meter = this.querySelector("progress")
@@ -82,6 +98,13 @@ export class HealthMeter extends HTMLElement {
 		if (name === "hue") {
 			this.meter.style.setProperty("--color-hue", newValue || "10")
 		}
+	}
+
+	render() {
+		this.innerHTML = String.raw`
+      <label>${this.label}</label>
+      <progress value="0.79375" max="1" class="meter" ></progress>
+    `
 	}
 }
 

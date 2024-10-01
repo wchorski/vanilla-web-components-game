@@ -1,11 +1,20 @@
 // drag example - https://jsfiddle.net/LULbV/
 // drag cred - https://stackoverflow.com/questions/11169554/how-to-style-dragged-element
 // cred example 2 - https://github.com/prof3ssorSt3v3/web-components-icons/blob/main/bigbang.js
+
 /**
  * @typedef {import('../types/ButtonState.js').State} ButtonState
  * @typedef {import('../types/ButtonState.js').Icon} ButtonIcon
  */
+/**
+ * @extends HTMLElement
+ * @element button-stateful
+ * @example
+ * todo paste example
+ */
 class ButtonStateful extends HTMLElement {
+	static stylesheetAdded = false
+
 	constructor() {
 		super()
 		// icons have 3 places `constructor()`, `this.getAttribute("icon")`, and `observedAttributes()`
@@ -13,73 +22,26 @@ class ButtonStateful extends HTMLElement {
 		this.label = this.getAttribute("label")
 		//todo am i gonna fully remove action?
 		this.onAction = this.onAction.bind(this)
+
+		if (!ButtonStateful.stylesheetAdded) {
+			this.loadStylesheet()
+			ButtonStateful.stylesheetAdded = true
+		}
+
+		this.render()
 	}
+	async loadStylesheet() {
+		const response = await fetch("../css/button-stateful.css")
+		const cssText = await response.text()
+		const style = document.createElement("style")
+		style.textContent = cssText
+
+		this.appendChild(style)
+	}
+
 	connectedCallback() {
 		//todo how to get html syntax highlighting?
-		const html = String.raw`
-      <style>
-        button-stateful {
-          display: flex;
-          gap: 5px;
-        }
-        button-stateful button {
-          color: white;
-          border-color: white;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          gap: 3px;
-        }
-        button-stateful .spin {
-          animation-name: animSpin;
-          animation-duration: 3s;
-          animation-timing-function: linear;
-          animation-iteration-count: infinite;
-        }
 
-        button-stateful .error {
-          padding-inline: 5px;
-          border-left-style: solid;
-          border-left-width: 3px;
-          border-left-color: red;
-          margin-block: 0;
-          display: flex;
-          align-items: center;
-        }
-
-        button-stateful .error:empty  {
-          visibility: hidden;
-        }
-
-        button-stateful button:disabled {
-          filter: brightness(0.7);
-          cursor: progress;
-        }
-
-        @keyframes animSpin {
-          from {
-            transform: rotate(0deg);
-          }
-          to {
-            transform: rotate(360deg);
-          }
-        }
-      </style>
-
-      <button type="button">
-        <span>
-          ${this.label}
-        </span>
-
-        <svg class="icon" width="15" height="15">
-          <use href="./icons/${this.icon}.svg#${this.icon}"></use>
-        </svg>
-        
-      </button>
-      <p class="error">${this.errorMsg || ""}</p>
-    `
-
-		this.innerHTML = html
 		this.classList.add(
 			"button-stateful",
 			this.getAttribute("icon") || this.icon
@@ -185,6 +147,23 @@ class ButtonStateful extends HTMLElement {
 
 	onAction() {
 		this._action()
+	}
+
+	render() {
+		this.innerHTML = String.raw`
+
+      <button type="button">
+        <span>
+          ${this.label}
+        </span>
+
+        <svg class="icon" width="15" height="15">
+          <use href="./icons/${this.icon}.svg#${this.icon}"></use>
+        </svg>
+        
+      </button>
+      <p class="error">${this.errorMsg || ""}</p>
+    `
 	}
 }
 customElements.define("button-stateful", ButtonStateful)

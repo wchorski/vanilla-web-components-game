@@ -42,6 +42,8 @@ const animStates = [
  * <character-actor id="char-1" class="character char_translate" alt="Character" src="./sprites/chao-neutral-v6.png" state="eat" hunger="0.5" sleep="0.5" energy="0.5" happyness="0.5"></character-actor>
  */
 class CharacterActor extends HTMLElement {
+	static stylesheetAdded = false
+
 	constructor() {
 		super()
 		// this.sprite = null
@@ -53,6 +55,20 @@ class CharacterActor extends HTMLElement {
 		// this.speed = 7000
 		// this.translateAnim = null
 		// this.healthUi = document.querySelector(`#${this.id}-health-ui`)
+		if (!CharacterActor.stylesheetAdded) {
+			this.loadStylesheet()
+			CharacterActor.stylesheetAdded = true
+		}
+
+		this.render()
+	}
+	async loadStylesheet() {
+		const response = await fetch("../css/character-actor.css")
+		const cssText = await response.text()
+		const style = document.createElement("style")
+		style.textContent = cssText
+
+		this.appendChild(style)
 	}
 
 	connectedCallback() {
@@ -553,6 +569,12 @@ class CharacterActor extends HTMLElement {
 				this.sprite.classList.add(this.state)
 			}
 		}
+	}
+
+	render() {
+		//todo move any `createElement` here and just this.query
+		// this.innerHTML = String.raw`
+		// `
 	}
 }
 
