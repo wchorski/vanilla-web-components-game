@@ -13,24 +13,21 @@ export class HealthMeter extends HTMLElement {
 		// this.value = Number(this.getAttribute("value"))
 
 		this.innerHTML = `
-    <label>${this.label}</label>
-    <progress value="0.79375" max="1" class="meter" ></progress>
+      <label>${this.label}</label>
+      <progress value="0.79375" max="1" class="meter" ></progress>
     `
 
 		this.labelEl = this.querySelector("label")
 		this.meter = this.querySelector("progress")
 
-		// this.meter.value = this.getAttribute("value") || this.value
+		//defaults
+		this.meter.value = this.getAttribute("value") || 0.5
 		this.meter.min = this.getAttribute("min") || 0
 		this.meter.max = this.getAttribute("max") || 1.0
-
-		// this.meter.style.setProperty(
-		// 	"--color-hue",
-		// 	this.getAttribute("hue") || "10"
-		// )
-
-		//defaults
-		this.meter.style.setProperty("--color-hue", "10")
+		this.meter.style.setProperty(
+			"--color-hue",
+			this.getAttribute("hue") || "10"
+		)
 
 		this.isInitialized = true
 	}

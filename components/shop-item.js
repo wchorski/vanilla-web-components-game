@@ -19,69 +19,6 @@ class ShopItem extends HTMLElement {
 	connectedCallback() {
 		//todo how to get html syntax highlighting?
 		const html = String.raw`
-      <style>
-        shop-item {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          z-index: 11;
-        }
-
-        .fruit-item {
-
-   
-          width: 16px;
-          height: 16px;
-          overflow: hidden;
-          z-index: 9;
-
-          img {
-            /* animation-name: animFruitSprite; */
-            animation-duration: 1s;
-            animation-timing-function: steps(7);
-            animation-iteration-count: infinite;
-            width: auto;
-            pointer-events: none;
-          }
-        }
-
-        .fruit-item.round {
-          img{
-            transform: translate3d(0, 0, 0);
-          }
-        }
-        .fruit-item.curved {
-          img{
-            transform: translate3d(0, calc(16px * -1), 0);
-          }
-        }
-        .fruit-item.heart {
-          img{
-            transform: translate3d(0, calc(16px * -2), 0);
-          }
-        }
-        .fruit-item.hex {
-          img{
-            transform: translate3d(0, calc(16px * -3), 0);
-          }
-        }
-        .fruit-item.tri {
-          img{
-            transform: translate3d(0, calc(16px * -4), 0);
-          }
-        }
-        .fruit-item.drop {
-          img{
-            transform: translate3d(0, calc(16px * -5), 0);
-          }
-        }
-        .fruit-item.square {
-          img{
-            transform: translate3d(0, calc(16px * -6), 0);
-          }
-        }
-
-      </style>
 
       <div class="fruit-item">
         <img class="icon no-select" src="./sprites/fruits-v2.png" alt="Shop item" />
@@ -157,21 +94,21 @@ class ShopItem extends HTMLElement {
 				if (!customElements.get("character-actor"))
 					return console.log("!!! no character-actor component")
 
-				const purchasedEgg = document.createElement("character-actor")
+				const charEgg = document.createElement("character-actor")
 
-				purchasedEgg.id = char.id
-				purchasedEgg.classList.add("character")
-				purchasedEgg.setAttribute("src", "./sprites/chao-neutral-v6.png")
-				purchasedEgg.setAttribute("state", char.state)
-				purchasedEgg.setAttribute("hunger", String(char.hunger))
-				purchasedEgg.setAttribute("sleep", String(char.sleep))
-				purchasedEgg.setAttribute("energy", String(char.energy))
-				purchasedEgg.setAttribute("happyness", String(char.happyness))
-				purchasedEgg.setAttribute("x", "0")
-				purchasedEgg.setAttribute("y", "0")
+				charEgg.id = char.id
+				charEgg.classList.add("character")
+				charEgg.setAttribute("src", "./sprites/chao-neutral-v6.png")
+				charEgg.setAttribute("state", char.state)
+				charEgg.setAttribute("hunger", String(char.hunger))
+				charEgg.setAttribute("sleep", String(char.sleep))
+				charEgg.setAttribute("energy", String(char.energy))
+				charEgg.setAttribute("happyness", String(char.happyness))
+				charEgg.setAttribute("x", "0")
+				charEgg.setAttribute("y", "0")
 				initCharacterUI([char])
 
-				window.playfield.appendChild(purchasedEgg)
+				window.playfield.appendChild(charEgg)
 				break
 
 			//default to 'fruit_*'

@@ -1,0 +1,58 @@
+shop-item {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	z-index: 11;
+}
+
+shop-item .fruit-item {
+	width: 16px;
+	height: 16px;
+	overflow: hidden;
+	z-index: 9;
+
+	img {
+		/* animation-name: animFruitSprite; */
+		animation-duration: 1s;
+		animation-timing-function: steps(7);
+		animation-iteration-count: infinite;
+		width: auto;
+		pointer-events: none;
+	}
+}
+
+shop-item .fruit-item.round {
+	img {
+		transform: translate3d(0, 0, 0);
+	}
+}
+shop-item .fruit-item.curved {
+	img {
+		transform: translate3d(0, calc(16px * -1), 0);
+	}
+}
+shop-item .fruit-item.heart {
+	img {
+		transform: translate3d(0, calc(16px * -2), 0);
+	}
+}
+shop-item .fruit-item.hex {
+	img {
+		transform: translate3d(0, calc(16px * -3), 0);
+	}
+}
+shop-item .fruit-item.tri {
+	img {
+		transform: translate3d(0, calc(16px * -4), 0);
+	}
+}
+shop-item .fruit-item.drop {
+	img {
+		transform: translate3d(0, calc(16px * -5), 0);
+	}
+}
+shop-item .fruit-item.square {
+	img {
+		transform: translate3d(0, calc(16px * -6), 0);
+	}
+}
