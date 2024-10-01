@@ -2,6 +2,9 @@
  * @typedef {import('./types/Character.js').Character} Character
  * @typedef {import('./types/ButtonState.js').ButtonState} ButtonState
  */
+
+import { HealthMeter } from "./components/health-meter.js"
+
 const defaultCharacters = [
 	{
 		id: "char-1",
@@ -42,10 +45,10 @@ async function saveData() {
 			id: char.id,
 			state: char.state,
 			birth: char.birth,
-			hunger: char.hunger,
-			sleep: char.sleep,
-			energy: char.energy,
-			happyness: char.happyness,
+			hunger: char.hunger || 0,
+			sleep: char.sleep || 0,
+			energy: char.energy || 0,
+			happyness: char.happyness || 0,
 		}))
 
 		Array.from(charObjs).map((char) => {
@@ -168,7 +171,7 @@ function initCharacterActors() {
 				}
 			})
 	}
-
+	/** @type {Character[]} charValues_temp */
 	const charValues_temp = getValuesStartingWithChar()
 
 	// todo switch this out when adding egg birth
@@ -182,12 +185,13 @@ function initCharacterActors() {
 		charEl.classList.add("character")
 		charEl.setAttribute("src", "./sprites/chao-neutral-v6.png")
 		charEl.setAttribute("state", char.state)
-		charEl.setAttribute("hunger", char.hunger)
-		charEl.setAttribute("sleep", char.sleep)
-		charEl.setAttribute("energy", char.energy)
-		charEl.setAttribute("happyness", char.happyness)
+		charEl.setAttribute("hunger", String(char.hunger))
+		charEl.setAttribute("sleep", String(char.sleep))
+		charEl.setAttribute("energy", String(char.energy))
+		charEl.setAttribute("happyness", String(char.happyness))
 		charEl.setAttribute("x", char.x)
 		charEl.setAttribute("y", char.y)
+
 		window.playfield.appendChild(charEl)
 	})
 
@@ -195,55 +199,61 @@ function initCharacterActors() {
 }
 initCharacterActors()
 
+/**
+ *
+ * @param {Character[]} charValues
+ * @returns
+ */
 export function initCharacterUI(charValues) {
 	if (!charValues || charValues.length <= 0)
 		return console.log("!!! no chars found")
 
-	Array.from(charValues).map((char) => {
+	charValues.forEach((char) => {
 		const charDash = document.createElement("div")
 		charDash.id = char.id + "-health-ui"
 		charDash.classList.add("charDash")
+		if (!dashboard) console.log('add <div id="dashboard">')
+		dashboard.appendChild(charDash)
 
 		const meterTitle = document.createElement("h2")
 		meterTitle.innerText = char.id
 		charDash.appendChild(meterTitle)
 
-		const hungerMeter = document.createElement("health-meter")
+		// const hungerMeter = document.createElement("health-meter")
+		const hungerMeter = new HealthMeter()
+		charDash.appendChild(hungerMeter)
 		hungerMeter.setAttribute("class", "hungerMeter")
-		hungerMeter.setAttribute("value", char.hunger || "0.5")
+		hungerMeter.value = char.hunger
+		hungerMeter.label = "hunger"
+		hungerMeter.hue = "17"
 		hungerMeter.setAttribute("min", "0.0")
 		hungerMeter.setAttribute("max", "1.0")
-		hungerMeter.setAttribute("label", "hunger")
-		hungerMeter.setAttribute("hue", "17")
-		charDash.appendChild(hungerMeter)
 
-		const sleepMeter = document.createElement("health-meter")
+		const sleepMeter = new HealthMeter()
+		charDash.appendChild(sleepMeter)
 		sleepMeter.setAttribute("class", "sleepMeter")
-		sleepMeter.setAttribute("value", char.sleep || "0.5")
+		sleepMeter.value = char.sleep
+		sleepMeter.label = "sleep"
+		sleepMeter.hue = "172"
 		sleepMeter.setAttribute("min", "0.0")
 		sleepMeter.setAttribute("max", "1.0")
-		sleepMeter.setAttribute("label", "sleep")
-		sleepMeter.setAttribute("hue", "172")
-		charDash.appendChild(sleepMeter)
 
-		const energyMeter = document.createElement("health-meter")
+		const energyMeter = new HealthMeter()
+		charDash.appendChild(energyMeter)
 		energyMeter.setAttribute("class", "energyMeter")
-		energyMeter.setAttribute("value", char.energy || "0.5")
+		energyMeter.value = char.energy
+		energyMeter.label = "energy"
+		energyMeter.hue = "272"
 		energyMeter.setAttribute("min", "0.0")
 		energyMeter.setAttribute("max", "1.0")
-		energyMeter.setAttribute("label", "energy")
-		energyMeter.setAttribute("hue", "272")
-		charDash.appendChild(energyMeter)
 
-		const happynessMeter = document.createElement("health-meter")
+		const happynessMeter = new HealthMeter()
+		charDash.appendChild(happynessMeter)
 		happynessMeter.setAttribute("class", "happynessMeter")
-		happynessMeter.setAttribute("value", char.happyness || "0.5")
+		happynessMeter.value = char.happyness
+		happynessMeter.label = "happyness"
+		happynessMeter.hue = "72"
 		happynessMeter.setAttribute("min", "0.0")
 		happynessMeter.setAttribute("max", "1.0")
-		happynessMeter.setAttribute("label", "happyness")
-		happynessMeter.setAttribute("hue", "72")
-		charDash.appendChild(happynessMeter)
-
-		dashboard.appendChild(charDash)
 	})
 }

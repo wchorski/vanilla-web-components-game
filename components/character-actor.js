@@ -155,6 +155,7 @@ class CharacterActor extends HTMLElement {
 		this.setAttribute("hunger", String(clampedPoints))
 		this.healthUi = document.querySelector(`#${this.id}-health-ui`)
 		if (!this.healthUi) return
+
 		this.healthUi
 			.querySelector("health-meter.hungerMeter")
 			.setAttribute("value", String(clampedPoints))

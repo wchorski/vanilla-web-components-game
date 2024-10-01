@@ -21,6 +21,7 @@ browser based pet simulator game built with
 
 ## TODO
 
+- [ ] have a pet limit of ~6?
 - [x] if hunger is below `0.2` trigger cry instead of sleep
 - [x] touch / mobile input!!!!!!!! with `touch` instead of `drag` w/e
 - [x] figure local storage or sqlite to save ring count
