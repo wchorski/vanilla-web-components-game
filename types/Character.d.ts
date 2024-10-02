@@ -60,4 +60,6 @@ export type Character = {
 	state: State
 	owner: string
 	original_owner: string
+	x: number
+	y: number
 }

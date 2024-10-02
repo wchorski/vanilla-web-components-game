@@ -2,27 +2,31 @@
 // drag cred - https://stackoverflow.com/questions/11169554/how-to-style-dragged-element
 // cred example 2 - https://github.com/prof3ssorSt3v3/web-components-props/blob/main/bigbang.js
 class InitComponent extends HTMLElement {
+	static stylesheetAdded = false
+
 	constructor() {
 		super()
 		// props have 3 places `constructor()`, `this.getAttribute("prop")`, and `observedAttributes()`
 		this.prop = "custom_prop"
 		this.onClick = this.onClick.bind(this)
+
+		if (!InitComponent.stylesheetAdded) {
+			this.loadStylesheet()
+			InitComponent.stylesheetAdded = true
+		}
+
+		this.render()
 	}
+	async loadStylesheet() {
+		const response = await fetch("../css/init-component.css")
+		const cssText = await response.text()
+		const style = document.createElement("style")
+		style.textContent = cssText
+
+		this.appendChild(style)
+	}
+
 	connectedCallback() {
-		//todo how to get html syntax highlighting?
-		const html = String.raw`
-      <style>
-        init-component {
-
-        }
-      </style>
-
-      <button>
-        init-component
-      </button>
-    `
-
-		this.innerHTML = html
 		this.classList.add("init-component", this.getAttribute("prop") || this.prop)
 		this.prop = this.getAttribute("prop") || this.prop
 
@@ -64,6 +68,20 @@ class InitComponent extends HTMLElement {
 
 	onClick() {
 		console.log("init-component clicky")
+	}
+
+	render() {
+		this.innerHTML = String.raw`
+      <style>
+        init-component {
+
+        }
+      </style>
+
+      <button>
+        init-component
+      </button>
+    `
 	}
 }
 customElements.define("init-component", InitComponent)

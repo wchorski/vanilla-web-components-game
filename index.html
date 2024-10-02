@@ -11,6 +11,7 @@
 		<script src="components/fruit-item.js" type="module" defer></script>
 		<script src="components/drop-zone.js" type="module" defer></script>
 		<script src="components/shop-item.js" type="module" defer></script>
+		<script src="components/playfield-weed.js" type="module" defer></script>
 		<script src="components/button-stateful.js" type="module" defer></script>
 		<script src="script.js" type="module" defer></script>
 	</head>
@@ -22,9 +23,14 @@
 				alt="playfield background garden"
 			/>
 			<!-- <character-actor> | initCharacterActors() -->
+			<!-- <fruit-item> & <playfield-weed> | initPlayItems() -->
 
-			<fruit-item type="tri" x="40" y="50" hungerValue="0.5"></fruit-item>
+			<!-- <fruit-item type="tri" x="40" y="50" hungerValue="0.5"></fruit-item>
 			<fruit-item type="curved" x="20" y="100" hungerValue="0.9"></fruit-item>
+			<playfield-weed></playfield-weed>
+			<playfield-weed></playfield-weed>
+			<playfield-weed></playfield-weed>
+			<playfield-weed></playfield-weed> -->
 
 			<div id="shop">
 				<h2>Shop</h2>
@@ -80,15 +86,15 @@
 				<span class="points-number" id="pointsDisplay"> 0 </span>
 			</number-counter>
 
-			<div class="meters_wrap" id="dashboard">
-				<!-- generated from script.js initCharacterUI() -->
-			</div>
-
 			<button-stateful
 				label="save"
 				id="savedata"
 				action="saveData()"
 			></button-stateful>
+
+			<div class="meters_wrap" id="dashboard">
+				<!-- generated from script.js initCharacterUI() -->
+			</div>
 		</div>
 
 		<hr />

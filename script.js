@@ -1,6 +1,7 @@
 /**
  * @typedef {import('./types/Character.js').Character} Character
  * @typedef {import('./types/ButtonState.js').ButtonState} ButtonState
+ * @typedef {import('./types/PlayItem.js').PlayItem} PlayItem
  */
 
 import { HealthMeter } from "./components/health-meter.js"
@@ -30,15 +31,11 @@ const dashboard = document.querySelector("#dashboard")
 /** @type {ButtonState} */
 const saveBtn = document.querySelector("#savedata")
 
-async function saveData() {
+async function saveCharactersData() {
 	try {
 		const characterActors = document.querySelectorAll(".character")
 		if (!characterActors || characterActors.length <= 0)
 			return console.log("!!! no characters on playfield")
-
-		const isError = false
-		saveBtn.state = "loading"
-		await new Promise((resolve) => setTimeout(resolve, 3000))
 
 		/**@param {Character[]} characterActors */
 		const charObjs = Array.from(characterActors).map((char) => ({
@@ -55,8 +52,51 @@ async function saveData() {
 			localStorage.setItem(char.id, JSON.stringify(char))
 		})
 
-		if (isError) throw new Error("uh ohh oopsie")
+		return true
+	} catch (error) {
+		console.log("!!! saveCharactersData: ", error)
+		return false
+	}
+}
 
+async function savePlayItemsData() {
+	try {
+		const playItems = document.querySelectorAll(".playfield-item")
+		if (!playItems || playItems.length <= 0)
+			return console.log("!!! no playItems on playfield")
+
+		/**@const {PlayItem[]} playItemsObjs */
+		const playItemsObjs = Array.from(playItems).map((item) => ({
+			x: item.x,
+			y: item.y,
+			nodeName: item.nodeName,
+			type: item.type,
+			hungerValue: item.hungerValue,
+		}))
+		// console.log("playItemsObjs: ", playItemsObjs)
+
+		localStorage.setItem("playItems", JSON.stringify(playItemsObjs))
+
+		return true
+	} catch (error) {
+		console.log("!!! savePlayItemsData: ", error)
+		return false
+	}
+}
+
+async function saveData() {
+	try {
+		saveBtn.state = "loading"
+
+		const isCharSaveSuccessful = saveCharactersData()
+		const isPlayItemsSaveSuccessful = savePlayItemsData()
+
+		//todo test error, useful when actually making a db save
+		if (!isCharSaveSuccessful || !isPlayItemsSaveSuccessful)
+			throw new Error("uh ohh oopsie")
+
+		//? add fake loading time to give better ui feedback
+		await new Promise((resolve) => setTimeout(resolve, 3000))
 		saveBtn.state = "success"
 		await new Promise((resolve) => setTimeout(resolve, 2000))
 		saveBtn.state = "idle"
@@ -156,6 +196,27 @@ document.addEventListener("dragover", (event) => {
 // 	}
 // }
 
+function initPlayItems() {
+	const playItemString = localStorage.getItem("playItems")
+	if (!playItemString) return console.log("no playItems yet...")
+	/** @type {PlayItem} playItemObjs */
+	const playItemObjs = JSON.parse(playItemString)
+
+	playItemObjs.forEach((item) => {
+		const itemEl = document.createElement(item.nodeName)
+		// itemEl.id = item.id
+		// itemEl.classList.add("character")
+		// itemEl.setAttribute("src", "./sprites/chao-neutral-v6.png")
+		itemEl.setAttribute("hungerValue", String(item.hungerValue))
+		itemEl.setAttribute("type", String(item.type))
+		itemEl.setAttribute("x", item.x)
+		itemEl.setAttribute("y", item.y)
+
+		// console.log(itemEl)
+		window.playfield.appendChild(itemEl)
+	})
+}
+
 function initCharacterActors() {
 	const getValuesStartingWithChar = () => {
 		return Array.from({ length: localStorage.length }, (_, i) =>
@@ -198,6 +259,7 @@ function initCharacterActors() {
 	initCharacterUI(charValues)
 }
 initCharacterActors()
+initPlayItems()
 
 /**
  *

@@ -21,6 +21,8 @@ browser based pet simulator game built with
 
 ## TODO
 
+- [ ] save playfield item data type and location (fruits, weeds, toys) and repopulate on initGame
+- [ ] use routine function with probability `chance` weights
 - [ ] have a pet limit of ~6?
 - [x] if hunger is below `0.2` trigger cry instead of sleep
 - [x] touch / mobile input!!!!!!!! with `touch` instead of `drag` w/e
