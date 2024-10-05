@@ -7,7 +7,9 @@
  */
 import { triggerRandomRoutine } from "../script.js"
 import { clamp } from "../lib/clamp.js"
+import { graphSlopeIntercept, invertPercentage } from "../lib/graphingLines.js"
 import { durationInSteps } from "../lib/durationInSteps.js"
+import { pickRandomFunctionByChance } from "../lib/pickRandomFunctionByChance.js"
 
 const animStates = [
 	"face_still",
@@ -41,7 +43,7 @@ const animStates = [
  * @example
  * <character-actor id="char-1" class="character char_translate" alt="Character" src="./sprites/chao-neutral-v6.png" state="eat" hunger="0.5" sleep="0.5" energy="0.5" happyness="0.5"></character-actor>
  */
-class CharacterActor extends HTMLElement {
+export class CharacterActor extends HTMLElement {
 	static stylesheetAdded = false
 
 	constructor() {
@@ -332,9 +334,10 @@ class CharacterActor extends HTMLElement {
 
 		const finish = () => {
 			this.state = "face_still"
-			// this.setAnimation()
+			// pickRandomFunctionByChance([
+			//   {function: this.sleepRoutine(), chance: this.sleep}
+			// ])
 			triggerRandomRoutine([
-				// () => this.transformRoutine(),
 				this.hunger > 0.2 ? () => this.sleepRoutine() : () => this.cryRoutine(),
 				() => this.sitRoutine(),
 			])
@@ -569,6 +572,40 @@ class CharacterActor extends HTMLElement {
 				this.sprite.classList.add(this.state)
 			}
 		}
+	}
+
+	nextPassiveRoutine() {
+		pickRandomFunctionByChance([
+			{
+				function: () => this.sleepRoutine(),
+				chance: graphSlopeIntercept(
+					invertPercentage(this.sleep) - invertPercentage(this.hunger),
+					2,
+					-0.2,
+					0,
+					1
+				),
+			},
+			{
+				function: () => this.transformRoutine(),
+				chance: graphSlopeIntercept(this.energy, 3, -1, 0, 1),
+			},
+			{
+				function: () => this.sitRoutine(),
+				chance: graphSlopeIntercept(
+					invertPercentage(this.energy),
+					1.2,
+					0,
+					0,
+					1
+				),
+			},
+			{
+				function: () => this.cryRoutine(),
+				chance: graphSlopeIntercept(invertPercentage(hunger), 4, -2, 0, 1),
+			},
+			//todo add happyRoutine()
+		])
 	}
 
 	render() {

@@ -1,7 +1,7 @@
 // drag example - https://jsfiddle.net/LULbV/
 // drag cred - https://stackoverflow.com/questions/11169554/how-to-style-dragged-element
 
-class FruitItem extends HTMLElement {
+export class FruitItem extends HTMLElement {
 	constructor() {
 		super()
 		this.type = "round"

@@ -2,6 +2,8 @@
 // drag cred - https://stackoverflow.com/questions/11169554/how-to-style-dragged-element
 
 import { buyItemWithPoints, initCharacterUI } from "../script.js"
+import { FruitItem } from "./fruit-item.js"
+import { CharacterActor } from "./character-actor.js"
 /**
  * @extends HTMLElement
  * @element shop-item
@@ -105,7 +107,7 @@ class ShopItem extends HTMLElement {
 				if (!customElements.get("character-actor"))
 					return console.log("!!! no character-actor component")
 
-				const charEgg = document.createElement("character-actor")
+				const charEgg = new CharacterActor()
 
 				charEgg.id = char.id
 				charEgg.classList.add("character")
@@ -124,7 +126,7 @@ class ShopItem extends HTMLElement {
 
 			//default to 'fruit_*'
 			default:
-				const purchasedFruitItem = document.createElement("fruit-item")
+				const purchasedFruitItem = new FruitItem()
 				purchasedFruitItem.setAttribute("type", this.type)
 				//todo howto get `hungerValue` from fruit-item component. or maybe use some sort of global switch statement with this.type
 				purchasedFruitItem.setAttribute("hungerValue", this.hungerValue)
