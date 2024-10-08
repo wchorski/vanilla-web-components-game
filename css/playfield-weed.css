@@ -1,0 +1,80 @@
+@property --score-opacity {
+	initial-value: 0;
+	inherits: true;
+	syntax: "<number>";
+}
+@property --img-opacity {
+	initial-value: 1;
+	inherits: true;
+	syntax: "<number>";
+}
+
+playfield-weed {
+	position: absolute;
+	width: 16px;
+	height: 16px;
+	overflow: hidden;
+	z-index: 9;
+	touch-action: none;
+	display: grid;
+	place-items: center;
+	grid-template-columns: 1fr;
+	grid-template-rows: 1fr;
+
+	img {
+		/* animation-name: animWeedPull; */
+		animation-duration: 1s;
+		animation-timing-function: steps(7);
+		animation-iteration-count: infinite;
+		width: auto;
+		pointer-events: none;
+		opacity: var(--img-opacity);
+	}
+}
+
+playfield-weed > * {
+	grid-area: 1/1;
+}
+
+playfield-weed span {
+	color: yellow;
+	width: 16px;
+	height: 16px;
+	opacity: var(--score-opacity);
+	pointer-events: none;
+	text-shadow: 1px 1px 1px black;
+}
+
+playfield-weed.animate {
+	animation-name: animWeedPull;
+	animation-duration: 0.5s;
+	animation-iteration-count: 1;
+	animation-timing-function: linear;
+	animation-direction: normal;
+	animation-fill-mode: forwards;
+	pointer-events: none;
+}
+
+/* todo animate grow on spawn */
+/* todo animate ground dirt on remove */
+@keyframes animWeedPull {
+	0% {
+		transform: translate3d(0, 0, 0);
+	}
+	5% {
+		transform: translate3d(0, -5px, 0);
+	}
+	10% {
+		transform: translate3d(0, 0, 0);
+	}
+	90% {
+		transform: translate3d(0, 0, 0);
+		--score-opacity: 0;
+		--img-opacity: 1;
+	}
+	100% {
+		transform: translate3d(0, -8px, 0);
+		--score-opacity: 1;
+		--img-opacity: 0;
+	}
+}

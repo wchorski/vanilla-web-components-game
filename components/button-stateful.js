@@ -2,6 +2,8 @@
 // drag cred - https://stackoverflow.com/questions/11169554/how-to-style-dragged-element
 // cred example 2 - https://github.com/prof3ssorSt3v3/web-components-icons/blob/main/bigbang.js
 
+import { envs } from "../envs.js"
+
 /**
  * @typedef {import('../types/ButtonState.js').State} ButtonState
  * @typedef {import('../types/ButtonState.js').Icon} ButtonIcon
@@ -31,7 +33,7 @@ class ButtonStateful extends HTMLElement {
 		this.render()
 	}
 	async loadStylesheet() {
-		const response = await fetch("../css/button-stateful.css")
+		const response = await fetch(envs.ENDPOINT + "/css/button-stateful.css")
 		const cssText = await response.text()
 		const style = document.createElement("style")
 		style.textContent = cssText

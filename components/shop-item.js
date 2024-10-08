@@ -4,6 +4,7 @@
 import { buyItemWithPoints, initCharacterUI } from "../script.js"
 import { FruitItem } from "./fruit-item.js"
 import { CharacterActor } from "./character-actor.js"
+import { envs } from "../envs.js"
 /**
  * @extends HTMLElement
  * @element shop-item
@@ -29,7 +30,7 @@ class ShopItem extends HTMLElement {
 		this.render()
 	}
 	async loadStylesheet() {
-		const response = await fetch("../css/shop-item.css")
+		const response = await fetch(envs.ENDPOINT + "/css/shop-item.css")
 		const cssText = await response.text()
 		const style = document.createElement("style")
 		style.textContent = cssText

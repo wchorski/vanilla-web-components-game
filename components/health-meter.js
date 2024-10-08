@@ -1,3 +1,5 @@
+import { envs } from "../envs.js"
+
 /**
  * <progress> element with label
  * @extends HTMLElement
@@ -22,7 +24,7 @@ export class HealthMeter extends HTMLElement {
 	}
 
 	async loadStylesheet() {
-		const response = await fetch("../css/health-meter.css")
+		const response = await fetch(envs.ENDPOINT + "/css/health-meter.css")
 		const cssText = await response.text()
 		const style = document.createElement("style")
 		style.textContent = cssText

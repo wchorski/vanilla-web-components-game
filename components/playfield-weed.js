@@ -1,24 +1,26 @@
 // drag example - https://jsfiddle.net/LULbV/
 // drag cred - https://stackoverflow.com/questions/11169554/how-to-style-dragged-element
+
+import { envs } from "../envs.js"
+import { randomValueBetweenRange } from "../lib/clamp.js"
+import { addToPoints } from "../script.js"
+
 // cred example 2 - https://github.com/prof3ssorSt3v3/web-components-props/blob/main/bigbang.js
-class PlayfieldWeed extends HTMLElement {
+export class PlayfieldWeed extends HTMLElement {
 	static stylesheetAdded = false
 
 	constructor() {
 		super()
 		// props have 3 places `constructor()`, `this.getAttribute("prop")`, and `observedAttributes()`
-		this.prop = "custom_prop"
 		this.onClick = this.onClick.bind(this)
 
-		// if (!PlayfieldWeed.stylesheetAdded) {
-		// 	this.loadStylesheet()
-		// 	PlayfieldWeed.stylesheetAdded = true
-		// }
-
-		this.render()
+		if (!PlayfieldWeed.stylesheetAdded) {
+			this.loadStylesheet()
+			PlayfieldWeed.stylesheetAdded = true
+		}
 	}
 	async loadStylesheet() {
-		const response = await fetch("../css/playfield-weed.css")
+		const response = await fetch(envs.ENDPOINT + "/css/playfield-weed.css")
 		const cssText = await response.text()
 		const style = document.createElement("style")
 		style.textContent = cssText
@@ -27,6 +29,8 @@ class PlayfieldWeed extends HTMLElement {
 	}
 
 	connectedCallback() {
+		this.prop = "custom_prop"
+		this.ringValue = randomValueBetweenRange(5, 30)
 		this.classList.add("playfield-weed", "playfield-item")
 
 		if (!this.x || !this.y) {
@@ -43,6 +47,8 @@ class PlayfieldWeed extends HTMLElement {
 
 		//? functions
 		this.addEventListener("click", this.onClick)
+
+		this.render()
 	}
 
 	/** @returns {number} */
@@ -83,37 +89,33 @@ class PlayfieldWeed extends HTMLElement {
 
 	disconnectedCallback() {
 		// remove any event listeners
+		this.removeEventListener("click", this.onClick)
 		console.log("playfield-weed removed from page.")
 	}
 
 	onClick() {
-		console.log("playfield-weed clicky")
+		this.classList.add("animate")
+
+		addPointsDelayed(0.1, this.ringValue)
+
+		setTimeout(() => {
+			this.remove()
+			// this.classList.remove("animate")
+		}, 2000)
 	}
 
 	render() {
 		this.innerHTML = String.raw`
-      <style>
-        playfield-weed {
-          position: absolute;
-          width: 16px;
-          height: 16px;
-          overflow: hidden;
-          z-index: 9;
-          touch-action: none;
-
-          img {
-            // animation-name: animFruitSprite;
-            animation-duration: 10s;
-            animation-timing-function: steps(7);
-            animation-iteration-count: infinite;
-            width: auto;
-            pointer-events: none;
-          }
-        }
-      </style>
-
       <img src="./sprites/weed.png" alt="Pluckable Weed" />
+      <span class="point_score"> +${this.ringValue} </span>
     `
 	}
 }
 customElements.define("playfield-weed", PlayfieldWeed)
+
+async function addPointsDelayed(delay, iterations) {
+	for (let index = 0; index < iterations; index++) {
+		await new Promise((resolve) => setTimeout(resolve, delay))
+		addToPoints()
+	}
+}

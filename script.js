@@ -5,6 +5,7 @@
  */
 
 import { HealthMeter } from "./components/health-meter.js"
+import { PlayfieldWeed } from "./components/playfield-weed.js"
 
 const defaultCharacters = [
 	{
@@ -127,7 +128,7 @@ function animPoints() {
 	ring_icon.classList.add("ring-anim")
 }
 
-function addToPoints() {
+export function addToPoints() {
 	let points = localStorage.getItem("points")
 		? parseInt(localStorage.getItem("points"))
 		: 0
@@ -319,3 +320,14 @@ export function initCharacterUI(charValues) {
 		happynessMeter.setAttribute("max", "1.0")
 	})
 }
+
+function spawnWeed() {
+	console.log("weed spawned")
+	const newWeed = new PlayfieldWeed()
+	window.playfield.appendChild(newWeed)
+}
+
+setInterval(() => {
+	spawnWeed()
+	//todo randomize this number between certain range
+}, 40000)

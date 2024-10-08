@@ -5,6 +5,8 @@
  * @typedef {import('../types/Coordinates.js').Coordinates2d} Coordinates2d
  * @typedef {import('../types/Coordinates.js').CardinalDirections} CardinalDirections
  */
+import { envs } from "../envs.js"
+
 import { triggerRandomRoutine } from "../script.js"
 import { clamp } from "../lib/clamp.js"
 import { graphSlopeIntercept, invertPercentage } from "../lib/graphingLines.js"
@@ -65,7 +67,7 @@ export class CharacterActor extends HTMLElement {
 		this.render()
 	}
 	async loadStylesheet() {
-		const response = await fetch("../css/character-actor.css")
+		const response = await fetch(envs.ENDPOINT + "/css/character-actor.css")
 		const cssText = await response.text()
 		const style = document.createElement("style")
 		style.textContent = cssText
@@ -334,13 +336,11 @@ export class CharacterActor extends HTMLElement {
 
 		const finish = () => {
 			this.state = "face_still"
-			// pickRandomFunctionByChance([
-			//   {function: this.sleepRoutine(), chance: this.sleep}
+			this.nextPassiveRoutine()
+			// triggerRandomRoutine([
+			// 	this.hunger > 0.2 ? () => this.sleepRoutine() : () => this.cryRoutine(),
+			// 	() => this.sitRoutine(),
 			// ])
-			triggerRandomRoutine([
-				this.hunger > 0.2 ? () => this.sleepRoutine() : () => this.cryRoutine(),
-				() => this.sitRoutine(),
-			])
 		}
 
 		const steps = 3
@@ -351,9 +351,9 @@ export class CharacterActor extends HTMLElement {
 			onFinish: finish,
 			signal: signal,
 			funcs: [
-				() => (this.sleep = -0.1 / steps),
-				() => (this.hunger = -0.05 / steps),
-				() => (this.energy = -0.15 / steps),
+				() => (this.sleep = -0.03 / steps),
+				() => (this.hunger = -0.01 / steps),
+				() => (this.energy = -0.04 / steps),
 			],
 		})
 	}
@@ -368,11 +368,12 @@ export class CharacterActor extends HTMLElement {
 		this.classList.add("char_translate_paused")
 
 		const finish = () => {
-			triggerRandomRoutine([
-				() => this.transformRoutine(),
-				this.hunger > 0.2 ? () => this.sleepRoutine() : () => this.cryRoutine(),
-				() => this.sitRoutine(),
-			])
+			this.nextPassiveRoutine()
+			// triggerRandomRoutine([
+			// 	() => this.transformRoutine(),
+			// 	this.hunger > 0.2 ? () => this.sleepRoutine() : () => this.cryRoutine(),
+			// 	() => this.sitRoutine(),
+			// ])
 		}
 
 		const steps = 3
@@ -421,13 +422,14 @@ export class CharacterActor extends HTMLElement {
 
 		const finish = () => {
 			//todo isHappy() that checks hunger, sleep, etc to see if exciteRoutine will be triggered
-			triggerRandomRoutine([
-				() => this.transformRoutine(),
-				this.hunger > 0.2 ? () => this.sleepRoutine() : () => this.cryRoutine(),
-				...(this.sleep > 0.4 && this.hunger > 0.4
-					? [() => this.exciteRoutine()]
-					: []),
-			])
+			this.nextPassiveRoutine()
+			// triggerRandomRoutine([
+			// 	() => this.transformRoutine(),
+			// 	this.hunger > 0.2 ? () => this.sleepRoutine() : () => this.cryRoutine(),
+			// 	...(this.sleep > 0.4 && this.hunger > 0.4
+			// 		? [() => this.exciteRoutine()]
+			// 		: []),
+			// ])
 		}
 
 		const steps = 8
@@ -438,9 +440,9 @@ export class CharacterActor extends HTMLElement {
 			onFinish: finish,
 			signal: signal,
 			funcs: [
-				() => (this.sleep = -0.02 / steps),
-				() => (this.hunger = -0.01 / steps),
-				() => (this.energy = -0.02 / steps),
+				() => (this.sleep = -0.025 / steps),
+				() => (this.hunger = -0.001 / steps),
+				() => (this.energy = -0.01 / steps),
 			],
 		})
 	}
@@ -466,25 +468,27 @@ export class CharacterActor extends HTMLElement {
 			// this.setAnimation()
 
 			setTimeout(() => {
-				triggerRandomRoutine([
-					() => this.transformRoutine(),
-					() => this.sitRoutine(),
-					this.hunger > 0.2
-						? () => this.sleepRoutine()
-						: () => this.cryRoutine(),
-				])
+				this.nextPassiveRoutine()
+				// triggerRandomRoutine([
+				// 	() => this.transformRoutine(),
+				// 	() => this.sitRoutine(),
+				// 	this.hunger > 0.2
+				// 		? () => this.sleepRoutine()
+				// 		: () => this.cryRoutine(),
+				// ])
 			}, 3000)
 		} else {
 			this.state = "eat"
 
 			const finish = () => {
-				triggerRandomRoutine([
-					() => this.transformRoutine(),
-					() => this.sitRoutine(),
-					this.hunger > 0.2
-						? () => this.sleepRoutine()
-						: () => this.cryRoutine(),
-				])
+				this.nextPassiveRoutine()
+				// triggerRandomRoutine([
+				// 	() => this.transformRoutine(),
+				// 	() => this.sitRoutine(),
+				// 	this.hunger > 0.2
+				// 		? () => this.sleepRoutine()
+				// 		: () => this.cryRoutine(),
+				// ])
 			}
 
 			const steps = 13
@@ -511,23 +515,23 @@ export class CharacterActor extends HTMLElement {
 		this.state = "sleep"
 
 		const finish = () => {
-			triggerRandomRoutine([
-				() => this.transformRoutine(),
-				() => this.sitRoutine(),
-				// () => this.sleepRoutine(),
-			])
+			this.nextPassiveRoutine()
+			// triggerRandomRoutine([
+			// 	() => this.transformRoutine(),
+			// 	() => this.sitRoutine(),
+			// ])
 		}
 
 		const steps = 10
 
 		durationInSteps({
-			duration: 5000,
+			duration: 8000,
 			steps,
 			onFinish: finish,
 			signal: signal,
 			funcs: [
-				() => (this.sleep = 0.35 / steps),
-				() => (this.energy = 0.3 / steps),
+				() => (this.sleep = 0.5 / steps),
+				() => (this.energy = 0.35 / steps),
 				() => (this.hunger = -0.01 / steps),
 			],
 		})
@@ -542,11 +546,11 @@ export class CharacterActor extends HTMLElement {
 		this.state = "cry"
 
 		const finish = () => {
-			triggerRandomRoutine([
-				...(this.energy > 0.3 ? [() => this.transformRoutine()] : []),
-				() => this.sitRoutine(),
-				// () => this.sleepRoutine(),
-			])
+			this.nextPassiveRoutine()
+			// triggerRandomRoutine([
+			// 	...(this.energy > 0.3 ? [() => this.transformRoutine()] : []),
+			// 	() => this.sitRoutine(),
+			// ])
 		}
 
 		const steps = 8
@@ -575,16 +579,38 @@ export class CharacterActor extends HTMLElement {
 	}
 
 	nextPassiveRoutine() {
+		// console.table({
+		// 	id: this.id,
+		// 	invSleep: invertPercentage(this.sleep),
+		// 	invHunger: invertPercentage(this.hunger),
+		// 	sleepChanceNoGraph:
+		// 		invertPercentage(this.sleep) - invertPercentage(this.hunger),
+		// 	sleepChance: graphSlopeIntercept(
+		// 		invertPercentage(this.sleep) - invertPercentage(this.hunger),
+		// 		2,
+		// 		-0.2,
+		// 		0,
+		// 		1
+		// 	),
+		// })
+
 		pickRandomFunctionByChance([
 			{
 				function: () => this.sleepRoutine(),
 				chance: graphSlopeIntercept(
 					invertPercentage(this.sleep) - invertPercentage(this.hunger),
-					2,
-					-0.2,
+					1,
+					0,
 					0,
 					1
 				),
+				// chance: graphSlopeIntercept(
+				// 	invertPercentage(this.sleep) - invertPercentage(this.hunger),
+				// 	2,
+				// 	-0.2,
+				// 	0,
+				// 	1
+				// ),
 			},
 			{
 				function: () => this.transformRoutine(),
@@ -594,7 +620,7 @@ export class CharacterActor extends HTMLElement {
 				function: () => this.sitRoutine(),
 				chance: graphSlopeIntercept(
 					invertPercentage(this.energy),
-					1.2,
+					0.3,
 					0,
 					0,
 					1
@@ -602,9 +628,18 @@ export class CharacterActor extends HTMLElement {
 			},
 			{
 				function: () => this.cryRoutine(),
-				chance: graphSlopeIntercept(invertPercentage(hunger), 4, -2, 0, 1),
+				chance: graphSlopeIntercept(
+					invertPercentage(this.hunger),
+					6.5,
+					-5.5,
+					0,
+					1
+				),
 			},
-			//todo add happyRoutine()
+			{
+				function: () => this.exciteRoutine(),
+				chance: graphSlopeIntercept(this.hunger, 3, -2, 0, 1),
+			},
 		])
 	}
 

@@ -118,10 +118,10 @@ console.log(
 // 			function: () => sitRoutine(),
 // 			chance: invertPercentage(energy),
 // 		},
-// 		{
-// 			function: () => cryRoutine(),
-// 			chance: invertPercentage(hunger),
-// 		},
+// {
+// 	function: () => cryRoutine(),
+// 	chance: invertPercentage(hunger),
+// },
 // 	])
 // }
 
