@@ -1,7 +1,7 @@
 // drag example - https://jsfiddle.net/LULbV/
 // drag cred - https://stackoverflow.com/questions/11169554/how-to-style-dragged-element
 
-class DropZone extends HTMLElement {
+export class DropZone extends HTMLElement {
 	constructor() {
 		super()
 		// props have 3 places `constructor()`, `this.getAttribute("prop")`, and `observedAttributes()`

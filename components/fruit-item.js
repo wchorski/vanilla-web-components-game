@@ -96,6 +96,8 @@ export class FruitItem extends HTMLElement {
 		this.style.opacity = "1"
 
 		const elementsFromPoint = document.elementsFromPoint(newX, newY)
+		console.log(elementsFromPoint)
+
 		const dropEl = elementsFromPoint[1]
 		if (dropEl.tagName === "DROP-ZONE") this.onDropInZone(dropEl)
 		this.x = newX

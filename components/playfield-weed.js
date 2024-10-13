@@ -25,7 +25,7 @@ export class PlayfieldWeed extends HTMLElement {
 		const style = document.createElement("style")
 		style.textContent = cssText
 
-		this.appendChild(style)
+		document.head.appendChild(style)
 	}
 
 	connectedCallback() {
@@ -90,7 +90,6 @@ export class PlayfieldWeed extends HTMLElement {
 	disconnectedCallback() {
 		// remove any event listeners
 		this.removeEventListener("click", this.onClick)
-		console.log("playfield-weed removed from page.")
 	}
 
 	onClick() {

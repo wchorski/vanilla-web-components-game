@@ -4,6 +4,7 @@
  * @typedef {import('./types/PlayItem.js').PlayItem} PlayItem
  */
 
+import { CharacterActor } from "./components/character-actor.js"
 import { HealthMeter } from "./components/health-meter.js"
 import { PlayfieldWeed } from "./components/playfield-weed.js"
 
@@ -241,7 +242,8 @@ function initCharacterActors() {
 		charValues_temp.length > 0 ? charValues_temp : defaultCharacters
 
 	charValues.forEach((char) => {
-		const charEl = document.createElement("character-actor")
+		// const charEl = document.createElement("character-actor")
+		const charEl = new CharacterActor()
 
 		charEl.id = char.id
 		charEl.classList.add("character")
@@ -322,7 +324,6 @@ export function initCharacterUI(charValues) {
 }
 
 function spawnWeed() {
-	console.log("weed spawned")
 	const newWeed = new PlayfieldWeed()
 	window.playfield.appendChild(newWeed)
 }

@@ -5,6 +5,8 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>Chao Pet</title>
 		<link rel="stylesheet" href="style.css" />
+		<!-- ? `script.js` must be at top of this list -->
+		<script src="script.js" type="module" defer></script>
 		<script src="components/character-actor.js" type="module" defer></script>
 		<script src="components/number-counter.js" type="module" defer></script>
 		<script src="components/health-meter.js" type="module" defer></script>
@@ -13,7 +15,6 @@
 		<script src="components/shop-item.js" type="module" defer></script>
 		<script src="components/playfield-weed.js" type="module" defer></script>
 		<script src="components/button-stateful.js" type="module" defer></script>
-		<script src="script.js" type="module" defer></script>
 	</head>
 	<body>
 		<div class="playfield disable-drag" id="playfield">
@@ -24,13 +25,6 @@
 			/>
 			<!-- <character-actor> | initCharacterActors() -->
 			<!-- <fruit-item> & <playfield-weed> | initPlayItems() -->
-
-			<!-- <fruit-item type="tri" x="40" y="50" hungerValue="0.5"></fruit-item>
-			<fruit-item type="curved" x="20" y="100" hungerValue="0.9"></fruit-item>
-			<playfield-weed></playfield-weed>
-			<playfield-weed></playfield-weed>
-			<playfield-weed></playfield-weed>
-			<playfield-weed></playfield-weed> -->
 
 			<div id="shop">
 				<h2>Shop</h2>
@@ -106,7 +100,7 @@
 			<button type="submit">LOGIN!</button>
 			<p id="output"></p>
 
-			<a href="https://chao-db.tawtaw.site/_utils">Go to Project Fauxton</a>
+			<a href="${DB_URL}/_utils">Go to Project Fauxton</a>
 		</form>
 
 		<button id="testDB">test Get Characters</button>
@@ -119,7 +113,7 @@
 				e.preventDefault()
 				const data = { name: username.value, password: password.value }
 				output.innerText = ""
-				fetch("https://chao-db.tawtaw.site/_session", {
+				fetch("${DB_URL}/_session", {
 					method: "POST",
 					credentials: "include",
 					headers: {
@@ -145,13 +139,13 @@
 				try {
 					const response = await fetch(
 						// "https://chao-db.tawtaw.site/_users/_all_docs?include_docs=true",
-						"https://chao-db.tawtaw.site/characters/_all_docs?include_docs=true",
+						"${DB_URL}/characters/_all_docs?include_docs=true",
 						{
 							method: "GET",
 							credentials: "include",
 							headers: {
 								Authorization:
-									"Basic " + btoa("chao-admin:46Y5RStSZ78pCyZDApq&kKnQ!tj9Gj"), // Replace with your CouchDB username and password
+									"Basic " + btoa(`${DB_USER}:${DB_PASSWORD}`), // Replace with your CouchDB username and password
 								"Content-Type": "application/json",
 							},
 						}

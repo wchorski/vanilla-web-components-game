@@ -1,14 +1,21 @@
 /**
  * @typedef {import('./types/Envs').Envs} Envs
  */
+
+import process from "./process.env.js"
+
+const isLocalDev =
+	process.env.DEV_HOST.startsWith("127.0.0.1") ||
+	process.env.DEV_HOST.startsWith("localhost")
+
 const HOSTNAME =
-	window.location.hostname === "127.0.0.1"
-		? window.location.hostname + ":5500"
+	window.location.hostname === process.env.DEV_HOST
+		? window.location.hostname + ":" + process.env.DEV_PORT
 		: window.location.hostname
 
-const PROTOCOL = HOSTNAME === "127.0.0.1:5500" ? "http://" : "https://"
+const PROTOCOL = isLocalDev ? "http://" : "https://"
 
-const PATH = "/tawtaw/vanilla-web-components-game"
+const PATH = isLocalDev ? "" : process.env.PATH
 
 /**
  * @type {Envs} envs
@@ -18,7 +25,7 @@ export const envs = {
 	PROTOCOL,
 	PATH,
 	ENDPOINT:
-		HOSTNAME === "127.0.0.1:5500"
+		HOSTNAME === `${process.env.DEV_HOST}:${process.env.DEV_PORT}`
 			? `http://${HOSTNAME}`
 			: `https://${HOSTNAME}${PATH}`,
 }

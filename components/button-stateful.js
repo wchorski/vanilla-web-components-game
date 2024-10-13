@@ -38,7 +38,7 @@ class ButtonStateful extends HTMLElement {
 		const style = document.createElement("style")
 		style.textContent = cssText
 
-		this.appendChild(style)
+		document.head.appendChild(style)
 	}
 
 	connectedCallback() {

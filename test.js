@@ -1,3 +1,6 @@
+//? used to test various non gui based js.
+// I can run these functions with `node test.js` in local terminal
+
 function hi() {
 	console.log("don't TEST ME! >:[")
 }
@@ -25,7 +28,7 @@ function graphSlopeIntercept(x, slope, b, min, max) {
 
 // graphSlopeIntercept(0.01, 2, -0.2, 0, 1)
 
-function pickRandomFunctionByChance(functionsWithChances) {
+function runRandomFunctionByChance(functionsWithChances) {
 	const totalWeight = functionsWithChances.reduce(
 		(acc, item) => acc + item.chance,
 		0
@@ -107,7 +110,7 @@ console.log(
 )
 
 // for (let index = 0; index < 15; index++) {
-// 	pickRandomFunctionByChance([
+// 	runRandomFunctionByChance([
 // 		{
 // 			function: () => sleepRoutine(),
 // 			chance: invertPercentage(sleep) + invertPercentage(hunger),
