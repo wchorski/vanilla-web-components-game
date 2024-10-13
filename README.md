@@ -5,6 +5,8 @@ browser based pet simulator game built with
 - Javascript
 - Web-Components (reusable UI library)
 
+[live demo](https://assets.tawtaw.site/tawtaw/vanilla-web-components-game/)
+
 > [!note] Inspired by Sonic Tiny Chao Garden
 
 ## What Is This Project For?
